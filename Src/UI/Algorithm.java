@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Algorithm {
     private List<Node> ListOfRouters;
-    public void PlacementConvertisseur(Topology tp){
+    public void converterPlacement(Topology tp){
         ListOfRouters = tp.getNodes();
     }
 }

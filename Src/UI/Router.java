@@ -20,8 +20,9 @@ public class Router extends Node {
         super.onClock();
     }
 
+    public void addConverter(){Converter = true;}
 
-    public boolean hasConv(){
+    public boolean hasConverter(){
         return Converter;
     }
 }

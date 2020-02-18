@@ -16,7 +16,7 @@ public class RouterIPv4 extends Router {
         }
         else{
             if(message.getSender() instanceof RouterIPv6){
-                if(((RouterIPv6) message.getSender()).hasConv() || hasConv()){
+                if(((RouterIPv6) message.getSender()).hasConverter() || hasConverter()){
                     //:COMMENT:CanCommunicate
                 }
                 else{
