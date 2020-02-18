@@ -2,12 +2,18 @@ package Algorithms;
 
 import UI.ConnectedComponent;
 import UI.Router;
+import UI.RouterIPv4;
+import UI.RouterIPv6;
+import io.jbotsim.core.Link;
+import io.jbotsim.core.Topology;
 
 import java.util.ArrayList;
 
 public class NonDeterministicAlgorithm implements AlgorithmModel {
 
+    private Topology tp;
     private ArrayList<ConnectedComponent> components = new ArrayList<ConnectedComponent>();
+    private ArrayList<Link> candidatesLinks= new ArrayList<Link>();
 
 
 
@@ -31,7 +37,17 @@ public class NonDeterministicAlgorithm implements AlgorithmModel {
 
         }
     }
+    public void candidatLink(){
+        for (Link l : tp.getLinks() ){
+            if (l.destination instanceof RouterIPv4 && l.source instanceof RouterIPv6){
+                candidatesLinks.add(l);
+            }
+        }
 
+    }
+    public void algorithm(){
+        //: TODO : BRIAN DIETRICH
+    }
 
 
 
