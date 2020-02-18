@@ -1,3 +1,5 @@
+package UI;
+
 import io.jbotsim.core.Message;
 import io.jbotsim.core.Node;
 

@@ -1,4 +1,6 @@
-import io.jbotsim.core.Color;
+import UI.Router;
+import UI.RouterIPv4;
+import UI.RouterIPv6;
 import io.jbotsim.core.Link;
 import io.jbotsim.core.Node;
 import io.jbotsim.core.Topology;
@@ -9,13 +11,13 @@ import io.jbotsim.ui.JViewer;
 
 public class Main implements SelectionListener, StartListener, CommandListener {
 
-    static final String ALGORITHM_NON_DETERMINISTIC = "Algorithm non deterministic";
-    static final String ALGORITHM_DISTRIBUTE = "Algorithm distribute";
-    static final String ALGORITHM_MACHINE_LEARNING = "Algorithm machine learning";
-    static final String ALGORITHM_PROB = "Algorithm prob";
-    static final String ALGORITHM_EXACT = "Algorithm exact";
-    static final String ADD_IPV4 = "Add IPv4 Router";
-    static final String ADD_IPV6 = "Add IPv6 Router";
+    static final String ALGORITHM_NON_DETERMINISTIC = "Algorithms.AlgorithmModel non deterministic";
+    static final String ALGORITHM_DISTRIBUTE = "Algorithms.AlgorithmModel distribute";
+    static final String ALGORITHM_MACHINE_LEARNING = "Algorithms.AlgorithmModel machine learning";
+    static final String ALGORITHM_PROB = "Algorithms.AlgorithmModel prob";
+    static final String ALGORITHM_EXACT = "Algorithms.AlgorithmModel exact";
+    static final String ADD_IPV4 = "Add IPv4 UI.Router";
+    static final String ADD_IPV6 = "Add IPv6 UI.Router";
     Topology tp;
     Router start;
 
@@ -83,11 +85,11 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
         if(s.equals(ADD_IPV4)){
             tp.setDefaultNodeModel(RouterIPv4.class);
-            System.out.println("Adding IPv4 Router");
+            System.out.println("Adding IPv4 UI.Router");
         }
         if(s.equals(ADD_IPV6)){
             tp.setDefaultNodeModel(RouterIPv6.class);
-            System.out.println("Adding IPv6 Router");
+            System.out.println("Adding IPv6 UI.Router");
         }
 
     }
