@@ -1,13 +1,14 @@
 package UI;
 
 import io.jbotsim.core.Message;
-import io.jbotsim.ui.icons.Icons;
+
 
 public class RouterIPv6 extends Router {
+
     @Override
     public void onStart() {
         super.onStart();
-        setIcon(Icons.WOLF);
+        setIcon("Code/Ressources/images/Temp-IPv6.png");
     }
 
     @Override
@@ -28,5 +29,9 @@ public class RouterIPv6 extends Router {
         }
     }
 
-
+    @Override
+    public void addConverter() {
+        super.addConverter();
+        setIcon("Code/Ressources/images/Temp-Converter.png");
+    }
 }

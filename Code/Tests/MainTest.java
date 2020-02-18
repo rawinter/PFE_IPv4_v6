@@ -12,7 +12,7 @@ class MainTest {
     void onCommandAddIPv4() {
         Main main = new Main();
         main.onCommand(Main.ADD_IPV4);
-        assertTrue(main.tp.getDefaultNodeModel().equals(RouterIPv4.class));
+        assertEquals(main.tp.getDefaultNodeModel(), RouterIPv4.class);
 
     }
 
@@ -20,7 +20,7 @@ class MainTest {
     void onCommandAddIPv6() {
         Main main = new Main();
         main.onCommand(Main.ADD_IPV6);
-        assertTrue(main.tp.getDefaultNodeModel().equals(RouterIPv6.class));
+        assertEquals(main.tp.getDefaultNodeModel(), RouterIPv6.class);
 
     }
 
@@ -28,7 +28,7 @@ class MainTest {
     void onCommandAddRouter() {
         Main main = new Main();
         main.tp.addNode(new Router());
-        assertTrue(main.tp.getNodes().size() == 1);
+        assertEquals(1, main.tp.getNodes().size());
 
     }
 

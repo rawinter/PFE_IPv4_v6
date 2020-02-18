@@ -9,7 +9,7 @@ class RouterTest {
     void addConverter() {
         Router router = new Router();
         router.addConverter();
-        assertFalse(router.hasConverter());
+        assertTrue(router.hasConverter());
     }
 
 }

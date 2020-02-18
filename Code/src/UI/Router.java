@@ -4,7 +4,6 @@ import io.jbotsim.core.Message;
 import io.jbotsim.core.Node;
 
 public class Router extends Node {
-    public int IPType;
     public boolean Converter = false;
     public boolean connectedComponents=false;
     public ConnectedComponent component;
