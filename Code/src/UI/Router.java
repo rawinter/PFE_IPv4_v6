@@ -6,6 +6,9 @@ import io.jbotsim.core.Node;
 public class Router extends Node {
     public int IPType;
     public boolean Converter = false;
+    public boolean connectedComponents=false;
+    public ConnectedComponent component;
+    public int candidateLinkNumber=0;
 
     @Override
     public void onStart() {
