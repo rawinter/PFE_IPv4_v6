@@ -6,9 +6,7 @@ public class ConnectedComponent {
     private ArrayList<Router> routers = new ArrayList<Router>();
 
 
-    public void addRouter(Router r){
-        routers.add(r);
-    }
+    public void addRouter(Router r){ routers.add(r);r.setComponent(this); }
 
     public void deleteRouter(Router r){
         if (routers.contains(r)){

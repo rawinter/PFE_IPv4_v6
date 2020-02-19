@@ -5,8 +5,7 @@ import io.jbotsim.core.Node;
 
 public class Router extends Node {
     public boolean Converter = false;
-    public boolean connectedComponents=false;
-    public ConnectedComponent component;
+    public ConnectedComponent component=null;
     public int candidateLinkNumber=0;
 
     @Override
@@ -39,4 +38,6 @@ public class Router extends Node {
     public void resetCandidateLinkNumber(){candidateLinkNumber=0;}
 
     public void decrementCandidateLinkNumber(){candidateLinkNumber--;}
+
+    public void setComponent(ConnectedComponent cc){ component=cc; }
 }

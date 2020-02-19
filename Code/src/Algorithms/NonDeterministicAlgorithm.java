@@ -16,51 +16,34 @@ public class NonDeterministicAlgorithm implements AlgorithmModel {
     private ArrayList<ConnectedComponent> components = new ArrayList<>();
     private ArrayList<Link> candidatesLinks= new ArrayList<>();
 
-    public NonDeterministicAlgorithm(Topology tp){
-        this.tp=tp;
-    }
+    public NonDeterministicAlgorithm(Topology tp){ this.tp=tp; }
 
     public void addComponents(ConnectedComponent c){ components.add(c); }
-    //:COMMENT:Fuse two components into one
-    public void FuseComponents(ConnectedComponent c1,ConnectedComponent c2){
-        if (components.contains(c1) && components.contains(c2)) {
-            ConnectedComponent c3 = new ConnectedComponent();
-            for (Router r1 : c1.getRouters()){
-                c3.addRouter(r1);
-            }
-            for(Router r2 : c2.getRouters()){
-                c3.addRouter(r2);
-            }
-            components.remove(c1);
-            components.remove(c2);
-            addComponents(c3);
 
-        }
-    }
 
     public void determineConnectedComponents(Topology tp){
         for (Node r : tp.getNodes()){
             Router r1 = (Router)r;
-            if(!r1.connectedComponents){
+            if(r1.getComponent()==null){
                 ConnectedComponent cc1= new ConnectedComponent();
                 cc1.addRouter(r1);
-                r1.connectedComponents=true;
                 r1.component=cc1;
             }
             for (Node rv : r1.getNeighbors()){
                 Router r2 = (Router)rv;
                 if (r2 instanceof RouterIPv4 && r1 instanceof RouterIPv4|| r2 instanceof RouterIPv6 && r1 instanceof RouterIPv6){
-                    r2.connectedComponents=true;
                     ConnectedComponent cc2= r1.getComponent();
                     for (ConnectedComponent cc : components){
                         if (cc.equals(cc2)){
                             cc.addRouter(r2);
+                            r2.component=cc;
                         }
                     }
                 }
             }
         }
     }
+    //:COMMENT : Increment the variables candidateLinkNumber of each router if it has a candidateLink
     public void countCandidatesLink() {
         for (Node n : tp.getNodes()) {
             Router r=(Router)n;
@@ -97,6 +80,7 @@ public class NonDeterministicAlgorithm implements AlgorithmModel {
         countCandidatesLink();
     }
 
+    //:COMMENT : Remove candidates links of a router r
     public void removeLinkCandidate(Router r){
         ArrayList<Link> tmp= new ArrayList<>();
         for (Link l : candidatesLinks){
@@ -108,6 +92,7 @@ public class NonDeterministicAlgorithm implements AlgorithmModel {
         candidatesLinks=tmp;
     }
 
+    //:COMMENT : choose the router with the most candidate links
     public Node chooseDegrees(){
         Router tmp=(Router)tp.getNodes().get(0);
         for (Node n : tp.getNodes()){
@@ -119,6 +104,7 @@ public class NonDeterministicAlgorithm implements AlgorithmModel {
         return tmp;
     }
 
+    //:COMMENT : Stop condition, if still a router which can becomes a converter
     public boolean stillaRouterToChoose(){
         for(Node n : tp.getNodes()){
             Router r=(Router)n;
@@ -129,18 +115,23 @@ public class NonDeterministicAlgorithm implements AlgorithmModel {
         return false;
     }
 
+    public void placeConverter(){
+        Router r=(Router)chooseDegrees();
+        r.addConverter();
+        r.resetCandidateLinkNumber();
+        removeLinkCandidate(r);
+        for (Node n : r.getNeighbors()){
+            Router r2=(Router)n;
+            r2.decrementCandidateLinkNumber();
+        }
+
+    }
+
     public void algorithm(){
         determineConnectedComponents(tp);
         candidatLink(tp);
         while(stillaRouterToChoose()){
-            Router r=(Router)chooseDegrees();
-            r.addConverter();
-            r.resetCandidateLinkNumber();
-            removeLinkCandidate(r);
-            for (Node n : r.getNeighbors()){
-                Router r2=(Router)n;
-                r2.decrementCandidateLinkNumber();
-            }
+            placeConverter();
         }
     }
 }
