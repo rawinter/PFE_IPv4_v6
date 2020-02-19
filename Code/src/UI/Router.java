@@ -29,4 +29,14 @@ public class Router extends Node {
     public boolean hasConverter(){
         return Converter;
     }
+
+    public void incrementCandidate(){ candidateLinkNumber++; }
+
+    public int getCandidateLinkNumber(){ return candidateLinkNumber; }
+
+    public ConnectedComponent getComponent(){return component; }
+
+    public void resetCandidateLinkNumber(){candidateLinkNumber=0;}
+
+    public void decrementCandidateLinkNumber(){candidateLinkNumber--;}
 }

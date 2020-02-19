@@ -1,3 +1,4 @@
+import Algorithms.NonDeterministicAlgorithm;
 import UI.Router;
 import UI.RouterIPv4;
 import UI.RouterIPv6;
@@ -82,6 +83,8 @@ public class Main implements SelectionListener, StartListener, CommandListener {
     public void onCommand(String s) {
         if(s.equals(ALGORITHM_NON_DETERMINISTIC)){
             //Where to launch the algorithm
+            NonDeterministicAlgorithm non_deterministic = new NonDeterministicAlgorithm(tp);
+            non_deterministic.algorithm();
         }
         if(s.equals(ALGORITHM_DISTRIBUTE)){
             //Where to launch the algorithm
