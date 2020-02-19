@@ -9,10 +9,14 @@ public class ConnectedComponent {
     public void addRouter(Router r){
         routers.add(r);
     }
+
     public void deleteRouter(Router r){
         if (routers.contains(r)){
             routers.remove(r);
         }
+    }
+    public boolean contains(Router r){
+        return routers.contains(r);
     }
     public ArrayList<Router> getRouters(){
         return routers;
