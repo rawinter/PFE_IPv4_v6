@@ -1,7 +1,6 @@
 import UI.Router;
 import UI.RouterIPv4;
 import UI.RouterIPv6;
-import io.jbotsim.core.Topology;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

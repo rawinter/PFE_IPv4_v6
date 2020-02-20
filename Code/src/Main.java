@@ -1,14 +1,17 @@
 import Algorithms.NonDeterministicAlgorithm;
+import UI.ConnectedComponent;
 import UI.Router;
 import UI.RouterIPv4;
 import UI.RouterIPv6;
-import io.jbotsim.core.Link;
-import io.jbotsim.core.Node;
-import io.jbotsim.core.Topology;
+import io.jbotsim.core.*;
 import io.jbotsim.core.event.CommandListener;
 import io.jbotsim.core.event.SelectionListener;
 import io.jbotsim.core.event.StartListener;
 import io.jbotsim.ui.JViewer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Main implements SelectionListener, StartListener, CommandListener {
 
@@ -22,6 +25,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
     static final String CONVERTER = "Place Converter";
     static final String STOP_CONVERTER = "Stop placing Converter";
     static final String NETWORK_GENERATION = "Network generation";
+    static final String COVERING_TREE = "Find every Connected Component";
     Topology tp;
     Router start;
     boolean converter = false;
@@ -43,6 +47,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         tp.addCommand(ALGORITHM_PROB);
         tp.addCommand(ALGORITHM_EXACT);
         tp.addCommand(CONVERTER);
+        tp.addCommand(COVERING_TREE);
     }
 
     @Override
@@ -70,13 +75,11 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
     }
 
-    public static void main(String[] args) {
-        new Main();
-    }
+    public static void main(String[] args) { new Main(); }
 
     @Override
     public void onStart() {
-        tp.setCommunicationRange(0);
+        tp.setCommunicationRange(-1);
     }
 
     @Override
@@ -123,8 +126,23 @@ public class Main implements SelectionListener, StartListener, CommandListener {
             NetworkGeneration(10,tp);
             System.out.println("Generation");
         }
+        if(s.equals(COVERING_TREE)) {
+            Random random = new Random();
+            List<Router> routersList = new ArrayList<>();
+            for(Node node : tp.getNodes())
+                routersList.add((Router) node);
+            List<ConnectedComponent> connectedComponentsList = new ArrayList<>();
+            //while(!routersList.isEmpty())
+            //{
+                int randomNumber = random.nextInt(routersList.size());
+                Router parent = routersList.get(randomNumber);
+                routersList.remove(parent);
+                parent.spanningTree(routersList, connectedComponentsList);
+            //}
+        }
     }
 
+    //:BUG:COMMENT:The link generation isn't working (double, triple link created)
     private void NetworkGeneration(int nb, Topology tp){
         tp.clear();
         double rand = Math.random();
