@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class UITest {
 
     @Test
-    void AddDelLink() {
+    void AddLink() {
         Topology tp = new Topology();
         tp.setCommunicationRange(-1);
         Router r1 = new Router();
@@ -20,6 +20,20 @@ public class UITest {
         Link l = new Link(r1,r2);
         tp.addLink(l);
         assertEquals(1, tp.getLinks().size());
+
+    }
+    @Test
+    void DelLink() {
+        Topology tp = new Topology();
+        tp.setCommunicationRange(-1);
+        Router r1 = new Router();
+        Router r2 = new Router();
+        tp.addNode(r1);
+        tp.addNode(r2);
+        Link l = new Link(r1,r2);
+        tp.addLink(l);
+        tp.removeLink(l);
+        assertEquals(0, tp.getLinks().size());
 
     }
 }

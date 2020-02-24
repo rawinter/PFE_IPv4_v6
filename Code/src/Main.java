@@ -32,6 +32,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
 
     public Main() {
         tp = new Topology();
+        tp.setSerializer(new NetworkSerializer());
         tp.setDefaultNodeModel(RouterIPv4.class);
         tp.addSelectionListener(this);
         tp.addStartListener(this);
