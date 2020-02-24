@@ -20,7 +20,6 @@ public class NonDeterministicAlgorithm implements AlgorithmModel {
 
     public void addComponents(ConnectedComponent c){ components.add(c); }
 
-
     public void determineConnectedComponents(Topology tp){
         for (Node r : tp.getNodes()){
             Router r1 = (Router)r;
@@ -28,13 +27,15 @@ public class NonDeterministicAlgorithm implements AlgorithmModel {
                 ConnectedComponent cc1= new ConnectedComponent();
                 cc1.addRouter(r1);
                 r1.component=cc1;
+                addComponents(cc1);
             }
             for (Node rv : r1.getNeighbors()){
                 Router r2 = (Router)rv;
-                if (r2 instanceof RouterIPv4 && r1 instanceof RouterIPv4|| r2 instanceof RouterIPv6 && r1 instanceof RouterIPv6){
+                if (r2 instanceof RouterIPv4 && r1 instanceof RouterIPv4||
+                        r2 instanceof RouterIPv6 && r1 instanceof RouterIPv6){
                     ConnectedComponent cc2= r1.getComponent();
                     for (ConnectedComponent cc : components){
-                        if (cc.equals(cc2)){
+                        if (cc.equals(cc2) && !cc.contains(r2)){
                             cc.addRouter(r2);
                             r2.component=cc;
                         }
@@ -43,53 +44,56 @@ public class NonDeterministicAlgorithm implements AlgorithmModel {
             }
         }
     }
+
     //:COMMENT : Increment the variables candidateLinkNumber of each router if it has a candidateLink
-    public void countCandidatesLink() {
+    public void countCandidatesLink(Topology tp) {
         for (Node n : tp.getNodes()) {
+            int cpt=0;
             Router r=(Router)n;
             for (Link l : candidatesLinks) {
                 if (l.source.equals(n) || l.destination.equals(n)) {
-                    r.incrementCandidate();
+                    cpt++;
                 }
             }
+            r.setCandidateLinkNumberCandidate(cpt);
         }
     }
 
-    public void candidatLink(Topology tp) {
-        for (Link l : tp.getLinks()) {
-            if (l.destination instanceof RouterIPv4 && l.source instanceof RouterIPv6 || l.destination instanceof RouterIPv6 && l.source instanceof RouterIPv4) {
-                candidatesLinks.add(l);
+    public boolean candidatLinksSameComponents(ConnectedComponent cc1, ConnectedComponent cc2){
+        for(Link l : candidatesLinks){
+            Router source=(Router)l.source;
+            Router destination=(Router)l.destination;
+            if ((cc1.contains(source) && cc2.contains(destination) ) || (cc1.contains(destination) && cc2.contains(source))){
+                return true;
             }
         }
-        for (Link l : candidatesLinks){
-            for (Link l2 : candidatesLinks){
-                if (!l.equals(l2)){
-                    if (l.source.equals(l2.source)||l.source.equals(l2.destination)){
-                        Router r1 = (Router)l.destination;
-                        Router r2 = (Router)l2.source;
-                        Router r3 = (Router)l2.destination;
-                        for (ConnectedComponent cc : components){
-                            if (cc.contains(r1) && (cc.contains(r2) || cc.contains(r3))){
-                                candidatesLinks.remove(l2);
-                            }
-                        }
-                    }
+        return false;
+    }
+    public void candidatLink(Topology tp) {
+        for (Link l : tp.getLinks()) {
+            if (l.destination instanceof RouterIPv4 && l.source instanceof RouterIPv6 ||
+                    l.destination instanceof RouterIPv6 && l.source instanceof RouterIPv4) {
+                Router destination=(Router)l.destination;
+                Router source=(Router)l.source;
+                if(!candidatLinksSameComponents(destination.getComponent(),source.getComponent())){
+                    candidatesLinks.add(l);
                 }
             }
         }
-        countCandidatesLink();
+        countCandidatesLink(tp);
     }
 
     //:COMMENT : Remove candidates links of a router r
-    public void removeLinkCandidate(Router r){
+    public void removeLinkCandidates(Topology tp,Router r){
         ArrayList<Link> tmp= new ArrayList<>();
         for (Link l : candidatesLinks){
-
             if(!(l.destination.equals(r) || l.source.equals(r))){
                 tmp.add(l);
             }
         }
         candidatesLinks=tmp;
+        countCandidatesLink(tp);
+
     }
 
     //:COMMENT : choose the router with the most candidate links
@@ -115,23 +119,20 @@ public class NonDeterministicAlgorithm implements AlgorithmModel {
         return false;
     }
 
-    public void placeConverter(){
+    public void placeConverter(Topology tp){
         Router r=(Router)chooseDegrees();
+        //System.out.println(r.getID());
         r.addConverter();
         r.resetCandidateLinkNumber();
-        removeLinkCandidate(r);
-        for (Node n : r.getNeighbors()){
-            Router r2=(Router)n;
-            r2.decrementCandidateLinkNumber();
-        }
-
+        removeLinkCandidates(tp,r);
     }
 
     public void algorithm(){
         determineConnectedComponents(tp);
         candidatLink(tp);
+        //System.out.print(candidatesLinks.size());
         while(stillaRouterToChoose()){
-            placeConverter();
+            placeConverter(tp);
         }
     }
 }

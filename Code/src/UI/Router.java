@@ -47,7 +47,7 @@ public class Router extends Node {
         return Converter;
     }
 
-    public void incrementCandidate(){ candidateLinkNumber++; }
+    public void setCandidateLinkNumberCandidate(int i){ candidateLinkNumber=i; }
 
     public int getCandidateLinkNumber(){ return candidateLinkNumber; }
 
