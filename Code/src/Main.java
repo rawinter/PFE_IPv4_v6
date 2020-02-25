@@ -144,26 +144,59 @@ public class Main implements SelectionListener, StartListener, CommandListener {
     }
 
     //:BUG:COMMENT:The link generation isn't working (double, triple link created)
-    private void NetworkGeneration(int nb, Topology tp){
+    //:CORRECTION:double or triple link should not appear anymore. A test has been created.
+    //:BUG:GIRAUDEAU:25/02:Sometimes it go on an infinite loop
+    private void NetworkGeneration(int nb, Topology tp) {
+
+        Random random = new Random();
         tp.clear();
-        double rand = Math.random();
-        for(int i = 0; i < nb*rand; i++){
-            RouterIPv4 r = new RouterIPv4();
-            r.setLocation(Math.random()*tp.getWidth(),Math.random()*tp.getHeight());
-            tp.addNode(r);
-        }
-        for(int i = 0; i< (nb-(nb*rand)); i++){
-            RouterIPv6 r = new RouterIPv6();
-            r.setLocation(Math.random()*tp.getWidth(),Math.random()*tp.getHeight());
-            tp.addNode(r);
+        int rand = random.nextInt(nb)+2;
+        for (int i = 0; i < rand; i++) {
+            RouterIPv4 r4 = new RouterIPv4();
+            r4.setLocation(random.nextInt(tp.getWidth()-(tp.getWidth()/10))+(tp.getWidth()/10),random.nextInt(tp.getHeight()-(tp.getHeight()/10))+(tp.getHeight()/10) );
+            tp.addNode(r4);
+            RouterIPv6 r6 = new RouterIPv6();
+            r6.setLocation(random.nextInt(tp.getWidth()-(tp.getWidth()/10))+(tp.getWidth()/10),random.nextInt(tp.getHeight()-(tp.getHeight()/10))+(tp.getHeight()/10 ));
+            tp.addNode(r6);
         }
 
-        for(int j = 0 ; j < (2*nb); j++){
-            int alea = (int) (Math.random()*(nb-2));
-            Link l = new Link(tp.getNodes().get(alea),tp.getNodes().get((alea+1)));
-            tp.addLink(l);
-
+            //:TOTEST:GIRAUDEAU:24/02:Connexite of the generated network
+        boolean valid = false;
+        while(!valid) {
+            int alea1 = random.nextInt(2*rand);
+            int alea2 = random.nextInt(2*rand);
+            Link l = new Link(tp.getNodes().get(alea1), tp.getNodes().get((alea2)));
+            if (!tp.getLinks().contains(l)) {
+                tp.addLink(l);
+            }
+            List<Node> nodesToTest = new ArrayList<>();
+            List<Node> nodesMarked = new ArrayList<>();
+            nodesToTest.add(tp.getNodes().get(0));
+            while (!nodesToTest.isEmpty()) {
+                Node currentNode = nodesToTest.remove(0);
+                nodesMarked.add(currentNode);
+                for(Node n : currentNode.getNeighbors()){
+                    if(!nodesToTest.contains(n) && !nodesMarked.contains(n)){
+                        nodesToTest.add(n);
+                    }
+                }
+            }
+            valid = true;
+            for (Node n : tp.getNodes()) {
+                if (!nodesMarked.contains(n)) {
+                    valid = false;
+                    break;
+                }
+            }
         }
-        System.out.println(tp.getLinks());
+//BUG:GIRAUDEAU:25/02:Infinite loop is here
+//        while(tp.getLinks().size() < 2*nb){
+//            int alea1 = random.nextInt(2*rand);
+//            int alea2 = random.nextInt(2*rand);
+//            Link l = new Link(tp.getNodes().get(alea1), tp.getNodes().get((alea2)));
+//            if (!tp.getLinks().contains(l)) {
+//                tp.addLink(l);
+//            }
+//        }
     }
 }

@@ -1,7 +1,10 @@
 import UI.Router;
 import UI.RouterIPv4;
 import UI.RouterIPv6;
+import io.jbotsim.core.Link;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +32,18 @@ class MainTest {
         main.tp.addNode(new Router());
         assertEquals(1, main.tp.getNodes().size());
 
+    }
+
+    @Test
+    void networkGeneration(){
+        Main main = new Main();
+        main.onCommand(Main.NETWORK_GENERATION);
+        List<Link> Links = main.tp.getLinks();
+        while(!Links.isEmpty()){
+            int size = Links.size();
+            Link toTest = Links.remove(0);
+            assertFalse(Links.contains(toTest));
+        }
     }
 
 }
