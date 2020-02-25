@@ -15,11 +15,11 @@ import java.util.Random;
 
 public class Main implements SelectionListener, StartListener, CommandListener {
 
-    static final String ALGORITHM_NON_DETERMINISTIC = "AlgorithmModel non deterministic";
-    static final String ALGORITHM_DISTRIBUTE = "AlgorithmModel distribute";
-    static final String ALGORITHM_MACHINE_LEARNING = "AlgorithmModel machine learning";
-    static final String ALGORITHM_PROB = "AlgorithmModel prob";
-    static final String ALGORITHM_EXACT = "AlgorithmModel exact";
+    static final String ALGORITHM_NON_DETERMINISTIC = "Algorithm Glouton";
+    static final String ALGORITHM_DISTRIBUTE = "Algorithm distribute";
+    static final String ALGORITHM_MACHINE_LEARNING = "Algorithm machine learning";
+    static final String ALGORITHM_PROB = "Algorithm prob";
+    static final String ALGORITHM_EXACT = "Algorithm exact";
     static final String ADD_IPV4 = "Add IPv4 Router";
     static final String ADD_IPV6 = "Add IPv6 Router";
     static final String CONVERTER = "Place Converter";
@@ -38,17 +38,23 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         tp.addStartListener(this);
         tp.addCommandListener(this);
         new JViewer(tp);
-        tp.start();
+        tp.removeAllCommands();
+        tp.addCommand("Save topology");
+        tp.addCommand("Load topology");
+        tp.addCommand("-"); //:COMMENT:Add a line to separate the commands
         tp.addCommand(NETWORK_GENERATION);
         tp.addCommand(ADD_IPV4);
         tp.addCommand(ADD_IPV6);
+        tp.addCommand(CONVERTER);
+        tp.addCommand("-");
         tp.addCommand(ALGORITHM_NON_DETERMINISTIC);
         tp.addCommand(ALGORITHM_DISTRIBUTE);
         tp.addCommand(ALGORITHM_MACHINE_LEARNING);
         tp.addCommand(ALGORITHM_PROB);
         tp.addCommand(ALGORITHM_EXACT);
-        tp.addCommand(CONVERTER);
         tp.addCommand(COVERING_TREE);
+
+        tp.start();
     }
 
     @Override
@@ -143,28 +149,32 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
     }
 
-    //:BUG:COMMENT:The link generation isn't working (double, triple link created)
-    //:CORRECTION:double or triple link should not appear anymore. A test has been created.
-    //:BUG:GIRAUDEAU:25/02:Sometimes it go on an infinite loop
     private void NetworkGeneration(int nb, Topology tp) {
 
         Random random = new Random();
         tp.clear();
         int rand = random.nextInt(nb)+2;
         for (int i = 0; i < rand; i++) {
-            RouterIPv4 r4 = new RouterIPv4();
-            r4.setLocation(random.nextInt(tp.getWidth()-(tp.getWidth()/10))+(tp.getWidth()/10),random.nextInt(tp.getHeight()-(tp.getHeight()/10))+(tp.getHeight()/10) );
-            tp.addNode(r4);
-            RouterIPv6 r6 = new RouterIPv6();
-            r6.setLocation(random.nextInt(tp.getWidth()-(tp.getWidth()/10))+(tp.getWidth()/10),random.nextInt(tp.getHeight()-(tp.getHeight()/10))+(tp.getHeight()/10 ));
-            tp.addNode(r6);
+            if(random.nextBoolean()) {
+                RouterIPv4 r4 = new RouterIPv4();
+                r4.setLocation(random.nextInt(tp.getWidth() - (tp.getWidth() / 5)) + (tp.getWidth() / 10), random.nextInt(tp.getHeight() - (tp.getHeight() / 5)) + (tp.getHeight() / 10));
+                tp.addNode(r4);
+            }
+            else {
+                RouterIPv6 r6 = new RouterIPv6();
+                r6.setLocation(random.nextInt(tp.getWidth() - (tp.getWidth() / 5)) + (tp.getWidth() / 10), random.nextInt(tp.getHeight() - (tp.getHeight() / 5)) + (tp.getHeight() / 10));
+                tp.addNode(r6);
+            }
         }
 
-            //:TOTEST:GIRAUDEAU:24/02:Connexite of the generated network
         boolean valid = false;
         while(!valid) {
-            int alea1 = random.nextInt(2*rand);
-            int alea2 = random.nextInt(2*rand);
+            System.out.println("while(!valid)");
+            int alea1 = random.nextInt(rand);
+            int alea2 = random.nextInt(rand);
+            while(alea1 == alea2){
+                alea2 = random.nextInt(rand);
+            }
             Link l = new Link(tp.getNodes().get(alea1), tp.getNodes().get((alea2)));
             if (!tp.getLinks().contains(l)) {
                 tp.addLink(l);
@@ -173,6 +183,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
             List<Node> nodesMarked = new ArrayList<>();
             nodesToTest.add(tp.getNodes().get(0));
             while (!nodesToTest.isEmpty()) {
+                System.out.println("nodesToTest.isempty()");
                 Node currentNode = nodesToTest.remove(0);
                 nodesMarked.add(currentNode);
                 for(Node n : currentNode.getNeighbors()){
@@ -189,10 +200,14 @@ public class Main implements SelectionListener, StartListener, CommandListener {
                 }
             }
         }
-//BUG:GIRAUDEAU:25/02:Infinite loop is here
-//        while(tp.getLinks().size() < 2*nb){
-//            int alea1 = random.nextInt(2*rand);
-//            int alea2 = random.nextInt(2*rand);
+
+//        while(tp.getLinks().size() < (2*rand)-1){
+//            System.out.println("while(tp.getlink");
+//            int alea1 = random.nextInt(rand);
+//            int alea2 = random.nextInt(rand);
+//            while(alea1 == alea2){
+//                alea2 = random.nextInt(rand);
+//            }
 //            Link l = new Link(tp.getNodes().get(alea1), tp.getNodes().get((alea2)));
 //            if (!tp.getLinks().contains(l)) {
 //                tp.addLink(l);
