@@ -1,3 +1,4 @@
+import Algorithms.GloutonAlgorithm;
 import Algorithms.NonDeterministicAlgorithm;
 import UI.ConnectedComponent;
 import UI.Router;
@@ -93,8 +94,10 @@ public class Main implements SelectionListener, StartListener, CommandListener {
     public void onCommand(String s) {
         if(s.equals(ALGORITHM_NON_DETERMINISTIC)){
             //Where to launch the algorithm
-            NonDeterministicAlgorithm non_deterministic = new NonDeterministicAlgorithm(tp);
-            non_deterministic.algorithm();
+            //NonDeterministicAlgorithm non_deterministic = new NonDeterministicAlgorithm(tp);
+            //non_deterministic.algorithm();
+            GloutonAlgorithm glouton = new GloutonAlgorithm(tp);
+            glouton.algorithm();
         }
         if(s.equals(ALGORITHM_DISTRIBUTE)){
             //Where to launch the algorithm

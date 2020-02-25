@@ -53,7 +53,14 @@ public class Router extends Node {
 
     public ConnectedComponent getComponent(){return component; }
 
-    public void resetCandidateLinkNumber(){candidateLinkNumber=0;}
+    public void resetCandidateLinkNumber(){
+        candidateLinkNumber=0;
+        for (Node n : this.getNeighbors()){
+            Router r= (Router)n;
+            if(r instanceof RouterIPv4 && this instanceof RouterIPv6 || r instanceof RouterIPv6 && this instanceof RouterIPv4)
+            r.decrementCandidateLinkNumber();
+        }
+    }
 
     public void decrementCandidateLinkNumber(){candidateLinkNumber--;}
 
