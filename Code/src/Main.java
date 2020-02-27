@@ -1,5 +1,4 @@
 import Algorithms.GloutonAlgorithm;
-import Algorithms.NonDeterministicAlgorithm;
 import UI.ConnectedComponent;
 import UI.Router;
 import UI.RouterIPv4;
@@ -27,6 +26,10 @@ public class Main implements SelectionListener, StartListener, CommandListener {
     static final String STOP_CONVERTER = "Stop placing Converter";
     static final String NETWORK_GENERATION = "Network generation";
     static final String COVERING_TREE = "Find every Connected Component";
+    static final String NETWORK_GENERATION_10 = "Network generation 10 Router Max";
+    static final String NETWORK_GENERATION_20 = "Network generation 20 Router Max";
+    static final String NETWORK_GENERATION_30 = "Network generation 30 Router Max";
+    static final String PRETREATMENT = "Pretreatment of the graph";
     Topology tp;
     Router start;
     boolean converter = false;
@@ -43,10 +46,11 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         tp.addCommand("Save topology");
         tp.addCommand("Load topology");
         tp.addCommand("-"); //:COMMENT:Add a line to separate the commands
-        tp.addCommand(NETWORK_GENERATION);
+
         tp.addCommand(ADD_IPV4);
         tp.addCommand(ADD_IPV6);
         tp.addCommand(CONVERTER);
+        tp.addCommand(PRETREATMENT);
         tp.addCommand("-");
         tp.addCommand(ALGORITHM_NON_DETERMINISTIC);
         tp.addCommand(ALGORITHM_DISTRIBUTE);
@@ -54,6 +58,8 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         tp.addCommand(ALGORITHM_PROB);
         tp.addCommand(ALGORITHM_EXACT);
         tp.addCommand(COVERING_TREE);
+        tp.addCommand("-");
+        tp.addCommand(NETWORK_GENERATION);
 
         tp.start();
     }
@@ -133,9 +139,43 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
         if(s.equals(NETWORK_GENERATION)){
 
+            tp.addCommand(NETWORK_GENERATION_10);
+            tp.addCommand(NETWORK_GENERATION_20);
+            tp.addCommand(NETWORK_GENERATION_30);
+            tp.removeCommand(NETWORK_GENERATION);
+        }
+        if(s.equals(NETWORK_GENERATION_10)){
+
             NetworkGeneration(10,tp);
             System.out.println("Generation");
+            tp.removeCommand(NETWORK_GENERATION_10);
+            tp.removeCommand(NETWORK_GENERATION_20);
+            tp.removeCommand(NETWORK_GENERATION_30);
+            tp.addCommand(NETWORK_GENERATION);
         }
+        if(s.equals(NETWORK_GENERATION_20)){
+
+            NetworkGeneration(20,tp);
+            System.out.println("Generation");
+            tp.removeCommand(NETWORK_GENERATION_10);
+            tp.removeCommand(NETWORK_GENERATION_20);
+            tp.removeCommand(NETWORK_GENERATION_30);
+            tp.addCommand(NETWORK_GENERATION);
+        }
+        if(s.equals(NETWORK_GENERATION_30)){
+
+            NetworkGeneration(30,tp);
+            System.out.println("Generation");
+            tp.removeCommand(NETWORK_GENERATION_10);
+            tp.removeCommand(NETWORK_GENERATION_20);
+            tp.removeCommand(NETWORK_GENERATION_30);
+            tp.addCommand(NETWORK_GENERATION);
+        }
+
+        if(s.equals(PRETREATMENT)){
+            Pretreatment();
+        }
+
         if(s.equals(COVERING_TREE)) {
             Random random = new Random();
             List<Router> routersList = new ArrayList<>();
@@ -172,7 +212,6 @@ public class Main implements SelectionListener, StartListener, CommandListener {
 
         boolean valid = false;
         while(!valid) {
-            System.out.println("while(!valid)");
             int alea1 = random.nextInt(rand);
             int alea2 = random.nextInt(rand);
             while(alea1 == alea2){
@@ -186,7 +225,6 @@ public class Main implements SelectionListener, StartListener, CommandListener {
             List<Node> nodesMarked = new ArrayList<>();
             nodesToTest.add(tp.getNodes().get(0));
             while (!nodesToTest.isEmpty()) {
-                System.out.println("nodesToTest.isempty()");
                 Node currentNode = nodesToTest.remove(0);
                 nodesMarked.add(currentNode);
                 for(Node n : currentNode.getNeighbors()){
@@ -203,18 +241,57 @@ public class Main implements SelectionListener, StartListener, CommandListener {
                 }
             }
         }
-
-//        while(tp.getLinks().size() < (2*rand)-1){
-//            System.out.println("while(tp.getlink");
-//            int alea1 = random.nextInt(rand);
-//            int alea2 = random.nextInt(rand);
-//            while(alea1 == alea2){
-//                alea2 = random.nextInt(rand);
-//            }
-//            Link l = new Link(tp.getNodes().get(alea1), tp.getNodes().get((alea2)));
-//            if (!tp.getLinks().contains(l)) {
-//                tp.addLink(l);
-//            }
-//        }
     }
+
+    private void Pretreatment(){
+        List<Node> nodesToTest;
+        List<Node> neighborNodes;
+        nodesToTest = tp.getNodes();
+        boolean candidat = false;
+        while(!nodesToTest.isEmpty()){
+            Node currentNode = nodesToTest.remove(0);
+            neighborNodes = currentNode.getNeighbors();
+            if(currentNode instanceof RouterIPv4) {
+                if (neighborNodes.size() == 1 && neighborNodes.get(0) instanceof RouterIPv4) {
+                    tp.removeNode(currentNode);
+                }
+//                else {
+//                    for (Node n : neighborNodes) {
+//                        if (n instanceof RouterIPv6) {
+//                            candidat = true;
+//                            break;
+//                        }
+//                    }
+//                }
+            }
+            if(currentNode instanceof RouterIPv6){
+                if (neighborNodes.size() == 1 && neighborNodes.get(0) instanceof RouterIPv6) {
+                    tp.removeNode(currentNode);
+                }
+//                else{
+//                    for(Node n : neighborNodes){
+//                        if (n instanceof RouterIPv4) {
+//                            candidat = true;
+//                            break;
+//                        }
+//                    }
+//                }
+            }
+//            if(!candidat){
+//                System.out.println("Non-Candidat");
+//                for(Node n1 : neighborNodes){
+//                    for(Node n2 : neighborNodes) {
+//                        if(n1 != n2){
+//                            Link l = new Link(n1,n2);
+//                            if(!tp.getLinks().contains(l)){
+//                                tp.addLink(l);
+//                            }
+//                        }
+//                    }
+//                }
+//                tp.removeNode(currentNode);
+//            }
+        }
+    }
+
 }
