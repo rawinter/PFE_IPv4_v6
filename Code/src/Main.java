@@ -16,7 +16,7 @@ import java.util.Random;
 public class Main implements SelectionListener, StartListener, CommandListener {
 
     static final String ALGORITHM_NON_DETERMINISTIC = "Algorithm Glouton";
-    static final String ALGORITHM_DISTRIBUTE = "Algorithm distribute";
+    static final String ALGORITHM_DISTRIBUTE = "Distributed Algorithm";
     static final String ALGORITHM_MACHINE_LEARNING = "Algorithm machine learning";
     static final String ALGORITHM_PROB = "Algorithm prob";
     static final String ALGORITHM_EXACT = "Algorithm exact";
@@ -177,7 +177,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
 
         if(s.equals(COVERING_TREE)) {
-            Random random = new Random();
+            /*Random random = new Random();
             List<Router> routersList = new ArrayList<>();
             for(Node node : tp.getNodes())
                 routersList.add((Router) node);
@@ -188,7 +188,22 @@ public class Main implements SelectionListener, StartListener, CommandListener {
                 Router parent = routersList.get(randomNumber);
                 routersList.remove(parent);
                 parent.spanningTree(routersList, connectedComponentsList);
-            //}
+            //}*/
+            for(Link link : tp.getLinks()) {
+                Router source = (Router) link.source;
+                Router destination = (Router) link.destination;
+                if(source.getClass().equals(destination.getClass()) && source instanceof RouterIPv4) {
+                    source.getCommonLinkWith(destination).setWidth(4);
+                    source.getCommonLinkWith(destination).setColor(Color.RED);
+                }
+                else if(source.getClass().equals(destination.getClass()) && source instanceof RouterIPv6) {
+                    source.getCommonLinkWith(destination).setWidth(4);
+                    source.getCommonLinkWith(destination).setColor(Color.BLUE);
+                }
+                else {
+                    source.getCommonLinkWith(destination).setColor(Color.GREEN);
+                }
+            }
         }
     }
 
@@ -243,54 +258,62 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
     }
 
-    private void Pretreatment(){
+    private void Pretreatment() {
+        boolean Modified = true;
         List<Node> nodesToTest;
-        List<Node> neighborNodes;
-        nodesToTest = tp.getNodes();
-        boolean candidat = false;
-        while(!nodesToTest.isEmpty()){
-            Node currentNode = nodesToTest.remove(0);
-            neighborNodes = currentNode.getNeighbors();
-            if(currentNode instanceof RouterIPv4) {
-                if (neighborNodes.size() == 1 && neighborNodes.get(0) instanceof RouterIPv4) {
-                    tp.removeNode(currentNode);
+        List<Node> neighborNodes = new ArrayList<>();
+        while (Modified) {
+            Modified = false;
+            nodesToTest = tp.getNodes();
+            boolean candidat;
+            while (!nodesToTest.isEmpty()) {
+                candidat = false;
+                Node currentNode = nodesToTest.remove(0);
+                neighborNodes.clear();
+                neighborNodes = currentNode.getNeighbors();
+                if (currentNode instanceof RouterIPv4) {
+                    if (neighborNodes.size() == 1 && neighborNodes.get(0) instanceof RouterIPv4) {
+                        tp.removeNode(currentNode);
+                        Modified = true;
+                    }
+                    else {
+                        for (Node n : neighborNodes) {
+                            if (n instanceof RouterIPv6) {
+                                candidat = true;
+                                break;
+                            }
+                        }
+                    }
                 }
-//                else {
-//                    for (Node n : neighborNodes) {
-//                        if (n instanceof RouterIPv6) {
-//                            candidat = true;
-//                            break;
-//                        }
-//                    }
-//                }
-            }
-            if(currentNode instanceof RouterIPv6){
-                if (neighborNodes.size() == 1 && neighborNodes.get(0) instanceof RouterIPv6) {
-                    tp.removeNode(currentNode);
+                if (currentNode instanceof RouterIPv6) {
+                    if (neighborNodes.size() == 1 && neighborNodes.get(0) instanceof RouterIPv6) {
+                        tp.removeNode(currentNode);
+                        Modified = true;
+                    }
+                    else{
+                        for(Node n : neighborNodes){
+                            if (n instanceof RouterIPv4) {
+                                candidat = true;
+                                break;
+                            }
+                        }
+                    }
                 }
-//                else{
-//                    for(Node n : neighborNodes){
-//                        if (n instanceof RouterIPv4) {
-//                            candidat = true;
-//                            break;
-//                        }
-//                    }
-//                }
+                if(!candidat && !Modified){
+                    for(Node n1 : neighborNodes){
+                        for(Node n2 : neighborNodes) {
+                            if(n1 != n2){
+                                Link l = new Link(n1,n2);
+                                if(!tp.getLinks().contains(l)){
+                                    tp.addLink(l);
+                                }
+                            }
+                        }
+                    }
+                    tp.removeNode(currentNode);
+                    Modified = true;
+                }
             }
-//            if(!candidat){
-//                System.out.println("Non-Candidat");
-//                for(Node n1 : neighborNodes){
-//                    for(Node n2 : neighborNodes) {
-//                        if(n1 != n2){
-//                            Link l = new Link(n1,n2);
-//                            if(!tp.getLinks().contains(l)){
-//                                tp.addLink(l);
-//                            }
-//                        }
-//                    }
-//                }
-//                tp.removeNode(currentNode);
-//            }
         }
     }
 

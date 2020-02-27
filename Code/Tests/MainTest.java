@@ -37,6 +37,7 @@ class MainTest {
 
     }
 
+    //:TRICKY:Test de non-regression
     @Test
     void networkGenerationLinkDuplication(){
         Main main = new Main();
@@ -83,16 +84,6 @@ class MainTest {
         assertTrue(valid);
     }
 
-
-    @Test
-    void CommandsToRouterModel(){
-        Main main = new Main();
-        main.onCommand(Main.ADD_IPV6);
-        assertEquals(main.tp.getDefaultNodeModel(), RouterIPv6.class);
-        main.onCommand(Main.ADD_IPV4);
-        assertEquals(main.tp.getDefaultNodeModel(), RouterIPv4.class);
-    }
-
     @Test
     void CommandsAddingConverter(){
         Main main = new Main();
@@ -102,8 +93,8 @@ class MainTest {
         assertFalse(main.converter);
     }
 
- //:TODO:GIRAUDEAU:Testing for the algorithm commands
 //:TODO:GIRAUDEAU:Testing the save and load
+
 
     @Test
     void RouterIcons(){
