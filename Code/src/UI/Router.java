@@ -11,6 +11,7 @@ public class Router extends Node {
     public boolean Converter = false;
     public ConnectedComponent component=null;
     public int candidateLinkNumber=0;
+    public boolean marked=false;
 
     //:COMMENT:Needed for the Spanning Tree method
     Router parent = null;
@@ -58,13 +59,15 @@ public class Router extends Node {
         for (Node n : this.getNeighbors()){
             Router r= (Router)n;
             if(r instanceof RouterIPv4 && this instanceof RouterIPv6 || r instanceof RouterIPv6 && this instanceof RouterIPv4)
-            r.decrementCandidateLinkNumber();
+                r.decrementCandidateLinkNumber();
         }
     }
 
     public void decrementCandidateLinkNumber(){candidateLinkNumber--;}
 
     public void setComponent(ConnectedComponent cc){ component=cc; }
+
+    public void setConverter(){ this.Converter=false;}
 
     public void spanningTree(List<Router> routersList, List<ConnectedComponent> connectedComponentsList)
     {

@@ -1,3 +1,4 @@
+import Algorithms.ExactAlgorithm;
 import Algorithms.GloutonAlgorithm;
 import UI.ConnectedComponent;
 import UI.Router;
@@ -116,6 +117,8 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
         if(s.equals(ALGORITHM_EXACT)){
             //Where to launch the algorithm
+            ExactAlgorithm exact=new ExactAlgorithm(tp);
+            exact.algorithm();
         }
         if(s.equals(ADD_IPV4)){
             tp.setDefaultNodeModel(RouterIPv4.class);
