@@ -1,9 +1,6 @@
 import Algorithms.ExactAlgorithm;
 import Algorithms.GloutonAlgorithm;
-import UI.ConnectedComponent;
-import UI.Router;
-import UI.RouterIPv4;
-import UI.RouterIPv6;
+import UI.*;
 import io.jbotsim.core.*;
 import io.jbotsim.core.event.CommandListener;
 import io.jbotsim.core.event.SelectionListener;
@@ -33,7 +30,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
     static final String PRETREATMENT = "Pretreatment of the graph";
     Topology tp;
     Router start;
-    boolean converter = false;
+    public boolean converter = false;
 
     public Main() {
         tp = new Topology();
@@ -42,7 +39,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         tp.addSelectionListener(this);
         tp.addStartListener(this);
         tp.addCommandListener(this);
-        new JViewer(tp);
+        Window win = new Window(tp);
         tp.removeAllCommands();
         tp.addCommand("Save topology");
         tp.addCommand("Load topology");
@@ -149,7 +146,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
         if(s.equals(NETWORK_GENERATION_10)){
 
-            NetworkGeneration(10,tp);
+//            NetworkGeneration(10,tp);
             System.out.println("Generation");
             tp.removeCommand(NETWORK_GENERATION_10);
             tp.removeCommand(NETWORK_GENERATION_20);
@@ -158,7 +155,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
         if(s.equals(NETWORK_GENERATION_20)){
 
-            NetworkGeneration(20,tp);
+//            NetworkGeneration(20,tp);
             System.out.println("Generation");
             tp.removeCommand(NETWORK_GENERATION_10);
             tp.removeCommand(NETWORK_GENERATION_20);
@@ -167,7 +164,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
         if(s.equals(NETWORK_GENERATION_30)){
 
-            NetworkGeneration(30,tp);
+//            NetworkGeneration(30,tp);
             System.out.println("Generation");
             tp.removeCommand(NETWORK_GENERATION_10);
             tp.removeCommand(NETWORK_GENERATION_20);
@@ -176,7 +173,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
 
         if(s.equals(PRETREATMENT)){
-            Pretreatment();
+//            Pretreatment();
         }
 
         if(s.equals(COVERING_TREE)) {
@@ -210,114 +207,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
     }
 
-    private void NetworkGeneration(int nb, Topology tp) {
 
-        Random random = new Random();
-        tp.clear();
-        int rand = random.nextInt(nb)+2;
-        for (int i = 0; i < rand; i++) {
-            if(random.nextBoolean()) {
-                RouterIPv4 r4 = new RouterIPv4();
-                r4.setLocation(random.nextInt(tp.getWidth() - (tp.getWidth() / 5)) + (tp.getWidth() / 10), random.nextInt(tp.getHeight() - (tp.getHeight() / 5)) + (tp.getHeight() / 10));
-                tp.addNode(r4);
-            }
-            else {
-                RouterIPv6 r6 = new RouterIPv6();
-                r6.setLocation(random.nextInt(tp.getWidth() - (tp.getWidth() / 5)) + (tp.getWidth() / 10), random.nextInt(tp.getHeight() - (tp.getHeight() / 5)) + (tp.getHeight() / 10));
-                tp.addNode(r6);
-            }
-        }
 
-        boolean valid = false;
-        while(!valid) {
-            int alea1 = random.nextInt(rand);
-            int alea2 = random.nextInt(rand);
-            while(alea1 == alea2){
-                alea2 = random.nextInt(rand);
-            }
-            Link l = new Link(tp.getNodes().get(alea1), tp.getNodes().get((alea2)));
-            if (!tp.getLinks().contains(l)) {
-                tp.addLink(l);
-            }
-            List<Node> nodesToTest = new ArrayList<>();
-            List<Node> nodesMarked = new ArrayList<>();
-            nodesToTest.add(tp.getNodes().get(0));
-            while (!nodesToTest.isEmpty()) {
-                Node currentNode = nodesToTest.remove(0);
-                nodesMarked.add(currentNode);
-                for(Node n : currentNode.getNeighbors()){
-                    if(!nodesToTest.contains(n) && !nodesMarked.contains(n)){
-                        nodesToTest.add(n);
-                    }
-                }
-            }
-            valid = true;
-            for (Node n : tp.getNodes()) {
-                if (!nodesMarked.contains(n)) {
-                    valid = false;
-                    break;
-                }
-            }
-        }
-    }
-
-    private void Pretreatment() {
-        boolean Modified = true;
-        List<Node> nodesToTest;
-        List<Node> neighborNodes = new ArrayList<>();
-        while (Modified) {
-            Modified = false;
-            nodesToTest = tp.getNodes();
-            boolean candidat;
-            while (!nodesToTest.isEmpty()) {
-                candidat = false;
-                Node currentNode = nodesToTest.remove(0);
-                neighborNodes.clear();
-                neighborNodes = currentNode.getNeighbors();
-                if (currentNode instanceof RouterIPv4) {
-                    if (neighborNodes.size() == 1 && neighborNodes.get(0) instanceof RouterIPv4) {
-                        tp.removeNode(currentNode);
-                        Modified = true;
-                    }
-                    else {
-                        for (Node n : neighborNodes) {
-                            if (n instanceof RouterIPv6) {
-                                candidat = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (currentNode instanceof RouterIPv6) {
-                    if (neighborNodes.size() == 1 && neighborNodes.get(0) instanceof RouterIPv6) {
-                        tp.removeNode(currentNode);
-                        Modified = true;
-                    }
-                    else{
-                        for(Node n : neighborNodes){
-                            if (n instanceof RouterIPv4) {
-                                candidat = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if(!candidat && !Modified){
-                    for(Node n1 : neighborNodes){
-                        for(Node n2 : neighborNodes) {
-                            if(n1 != n2){
-                                Link l = new Link(n1,n2);
-                                if(!tp.getLinks().contains(l)){
-                                    tp.addLink(l);
-                                }
-                            }
-                        }
-                    }
-                    tp.removeNode(currentNode);
-                    Modified = true;
-                }
-            }
-        }
-    }
 
 }

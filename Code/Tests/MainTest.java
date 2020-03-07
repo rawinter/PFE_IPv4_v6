@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MainTest {
 
+//    Testing the modification of the Node model
     @Test
     void onCommandAddIPv4() {
         Main main = new Main();
@@ -29,6 +30,7 @@ class MainTest {
 
     }
 
+//    Testing the adding of a router on the topology
     @Test
     void onCommandAddRouter() {
         Main main = new Main();
@@ -37,7 +39,7 @@ class MainTest {
 
     }
 
-    //:TRICKY:Test de non-regression
+//      Non-regression test created to assure that the Network generation do not add same links multiple time
     @Test
     void networkGenerationLinkDuplication(){
         Main main = new Main();
@@ -49,6 +51,7 @@ class MainTest {
         }
     }
 
+//    Testing of the network generation
     @Test
     void networkGeneration(){
         Main main = new Main();
@@ -58,6 +61,7 @@ class MainTest {
     }
 
 
+//    Testing for the connexite of a generated network
     @Test
     void Connexite(){
         Main main = new Main();
@@ -84,6 +88,7 @@ class MainTest {
         assertTrue(valid);
     }
 
+//    Testing of the command to place converter
     @Test
     void CommandsAddingConverter(){
         Main main = new Main();
@@ -93,9 +98,9 @@ class MainTest {
         assertFalse(main.converter);
     }
 
-//:TODO:GIRAUDEAU:Testing the save and load
 
 
+//    Testing that the router have the correct icons
     @Test
     void RouterIcons(){
         Main main = new Main();
