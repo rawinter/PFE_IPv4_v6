@@ -34,4 +34,8 @@ public class RouterIPv4 extends Router {
         setIcon("Code/Ressources/images/Temp-Converter.png");
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " IPv4";
+    }
 }
