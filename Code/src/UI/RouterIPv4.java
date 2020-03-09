@@ -38,4 +38,10 @@ public class RouterIPv4 extends Router {
     public String toString() {
         return super.toString() + " IPv4";
     }
+
+    @Override
+    public void setConverter() {
+        super.setConverter();
+        setIcon("Code/Ressources/images/Temp-IPv4.png");
+    }
 }

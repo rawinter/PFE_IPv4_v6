@@ -67,7 +67,9 @@ public class Router extends Node {
 
     public void setComponent(ConnectedComponent cc){ component=cc; }
 
-    public void setConverter(){ this.Converter=false;}
+    public void setConverter(){
+        this.Converter=false;
+    }
 
     public void spanningTree(List<Router> routersList, List<ConnectedComponent> connectedComponentsList)
     {

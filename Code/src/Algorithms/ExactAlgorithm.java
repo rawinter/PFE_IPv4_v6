@@ -114,7 +114,7 @@ public class ExactAlgorithm implements AlgorithmModel {
                 else{
                     for(Node n : nodes){
                         Router r = (Router)n;
-                        r.Converter=false;
+                        r.setConverter();
                     }
                 }
             }

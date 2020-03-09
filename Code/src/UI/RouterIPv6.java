@@ -39,4 +39,10 @@ public class RouterIPv6 extends Router {
     public String toString() {
         return super.toString() + " IPv6";
     }
+
+    @Override
+    public void setConverter() {
+        super.setConverter();
+        setIcon("Code/Ressources/images/Temp-IPv6.png");
+    }
 }
