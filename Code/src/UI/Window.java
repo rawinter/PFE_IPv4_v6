@@ -6,7 +6,6 @@ import Algorithms.GloutonAlgorithm;
 import io.jbotsim.core.Link;
 import io.jbotsim.core.Node;
 import io.jbotsim.core.Topology;
-import io.jbotsim.ui.JTopology;
 import io.jbotsim.ui.JViewer;
 
 import javax.swing.*;
@@ -40,6 +39,9 @@ public class Window extends JViewer implements ActionListener, ItemListener {
 
 
     Topology tp;
+    List<RouterIPv4> routerIPv4 = new ArrayList<>();
+    List<RouterIPv6> routerIPv6= new ArrayList<>();
+    List<Link> links = new ArrayList<>();
     String Algo;
     double x = window.getWidth();
     double y = window.getHeight();
@@ -102,7 +104,6 @@ public class Window extends JViewer implements ActionListener, ItemListener {
 
         window.setJMenuBar(menuBar);
 
-
         pan.setLayout(new BorderLayout());
 
         load.addActionListener(this);
@@ -123,8 +124,8 @@ public class Window extends JViewer implements ActionListener, ItemListener {
 
         window.getContentPane().setBackground(Color.BLACK);
         window.setContentPane(pan);
+        window.setExtendedState(Frame.MAXIMIZED_BOTH);
         window.add(jtp,BorderLayout.CENTER);
-        window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         window.setVisible(true);
 
 
@@ -139,8 +140,20 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             tp.setDefaultNodeModel(RouterIPv4.class);
         }
         if(actionEvent.getSource() == networkGeneration){
-            nbIPv4 = Integer.parseInt(JOptionPane.showInputDialog(null,"number of ipv4 router","Network generation", JOptionPane.QUESTION_MESSAGE));
-            nbIPv6 = Integer.parseInt(JOptionPane.showInputDialog(null,"number of ipv6 router","Network generation", JOptionPane.QUESTION_MESSAGE));
+            try {
+                nbIPv4 = Integer.parseInt(JOptionPane.showInputDialog(null, "number of ipv4 router", "Network generation", JOptionPane.QUESTION_MESSAGE));
+            } catch (NumberFormatException e) {
+                System.out.println("No number specified default at 10");
+            } catch (HeadlessException e) {
+                System.out.println("Headless");
+            }
+            try {
+                nbIPv6 = Integer.parseInt(JOptionPane.showInputDialog(null, "number of ipv6 router", "Network generation", JOptionPane.QUESTION_MESSAGE));
+            } catch (NumberFormatException e) {
+                System.out.println("No number specified default at 10");
+            } catch (HeadlessException e) {
+                System.out.println("Headless");
+            }
             NetworkGeneration(tp);
         }
         if(actionEvent.getSource() == converter){
@@ -155,17 +168,28 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             tp.executeCommand("Stop placing Converter");
         }
         if(actionEvent.getSource() == gloutonAlgorithm) {
-            Pretreatment(tp);
+            SavingRouter();
+
             GloutonAlgorithm glouton = new GloutonAlgorithm(tp);
             glouton.algorithm();
+
+            RedoingTheNetwork();
         }
         if(actionEvent.getSource() == distributedAlgorithm) {
-            Pretreatment(tp);
+            SavingRouter();
+
+//  Distributed Algorithm function call
+
+            RedoingTheNetwork();
         }
         if(actionEvent.getSource() == exactAlgorithm) {
+            SavingRouter();
             Pretreatment(tp);
-            ExactAlgorithm exact = new ExactAlgorithm(tp);
-            exact.algorithm();
+
+//            ExactAlgorithm exact = new ExactAlgorithm(tp);
+//            exact.algorithm();
+
+            RedoingTheNetwork();
         }
         if(actionEvent.getSource() == treeConnexite){
             tp.executeCommand("Find every Connected Component");
@@ -178,7 +202,39 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         }
     }
 
+    private void RedoingTheNetwork() {
+        tp.clearLinks();
+        for(Node n : routerIPv4){
+            if(!tp.getNodes().contains(n)){
+                tp.addNode(n);
+            }
+        }
+        for(Node n : routerIPv6){
+            if(!tp.getNodes().contains(n)){
+                tp.addNode(n);
+            }
+        }
+        for(Link l : links){
+            tp.addLink(l);
+        }
+    }
 
+    private void SavingRouter() {
+        routerIPv4.clear();
+        routerIPv6.clear();
+        links.clear();
+        for(Node r : tp.getNodes()){
+            if(r instanceof RouterIPv4){
+                routerIPv4.add((RouterIPv4) r);
+            }
+            if(r instanceof RouterIPv6){
+                routerIPv6.add((RouterIPv6) r);
+            }
+        }
+        links.addAll(tp.getLinks());
+
+        Pretreatment(tp);
+    }
 
 
     private void NetworkGeneration(Topology tp) {
@@ -310,4 +366,5 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 Algo = (String) itemEvent.getItem();
             }
     }
+
 }
