@@ -1,77 +1,47 @@
 package Algorithms;
 
-import DataStructure.SpanningTreeStructure;
-import UI.ConnectedComponent;
+import DataStructure.MessageContentIPv4;
+import DataStructure.MessageContentIPv6;
 import UI.Router;
 import UI.RouterIPv4;
 import UI.RouterIPv6;
-import io.jbotsim.core.Color;
 import io.jbotsim.core.Message;
 import io.jbotsim.core.Node;
+import io.jbotsim.core.Topology;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class SpanningTreeDistributed implements AlgorithmModel {
 
-    public Router spanningTreeDistributed(Message message, Router origin, Router parent) {
-        if(message.getFlag().equals("TreeCreation"))
-        {
-            if (parent == null) {
-                SpanningTreeStructure content = (SpanningTreeStructure) message.getContent();
-                parent = (Router) message.getSender();
-                content.routersList.remove(origin);
-                if (parent.getClass().equals(origin.getClass())) {
-                    origin.getCommonLinkWith(message.getSender()).setWidth(4);
-                    if (origin instanceof RouterIPv4) {
-                        origin.getCommonLinkWith(message.getSender()).setColor(Color.RED);
-                    }
-                    if (origin instanceof RouterIPv6) {
-                        origin.getCommonLinkWith(message.getSender()).setColor(Color.BLUE);
-                    }
-                    for (ConnectedComponent component : content.connectedComponentsList) {
-                        if (component.contains(parent)) {
-                            component.addRouter(origin);
-                        }
-                    }
-                }
-                else {
-                    origin.getCommonLinkWith(message.getSender()).setColor(Color.GREEN);
-                    ConnectedComponent newOne = new ConnectedComponent();
-                    newOne.addRouter(origin);
-                    content.connectedComponentsList.add(newOne);
-                }
+    private List<Node> allNodes;
+    private Topology tp;
 
-                origin.sendAll(new Message(new SpanningTreeStructure(content.routersList, content.connectedComponentsList), "TreeCreation"));
+    public SpanningTreeDistributed(Topology tp) {
+        this.tp = tp;
+    }
 
-            }
-            else {
-                for (Node neighbor : origin.getOutNeighbors())
-                {
-                    if (origin.getCommonLinkWith(neighbor).getColor().equals(Color.RED) || origin.getCommonLinkWith(neighbor).getColor().equals(Color.BLUE) || origin.getCommonLinkWith(neighbor).getColor().equals(Color.GREEN)) {
-                        //:COMMENT:Need to modify this statement to simplify it
-                    }
-                    else {
-                        origin.send(neighbor, new Message(this,"TreeCreationLastLink"));
-                        break;
-                    }
-                }
+    public boolean newSpanningTree() {
+        allNodes = tp.getNodes();
+        Random random = new Random();
+        List<Router> routersList = new ArrayList<>();
+        boolean needToPerform = false;
+        for (Node node : allNodes) {
+            Router router = (Router) node;
+            if(router.spanningTreeCreation) {
+                needToPerform = true;
+                routersList.add(router);
             }
         }
-        //:COMMENT:This type of message is used to color the link which does not belong to the spanning tree
-        if(message.getFlag().equals("TreeCreationLastLink")) {
-            Router sender = (Router) message.getSender();
-            if(sender.getClass().equals(origin.getClass())) {
-                origin.getCommonLinkWith(sender).setWidth(4);
-                if(origin instanceof RouterIPv4) {
-                    origin.getCommonLinkWith(message.getSender()).setColor(Color.RED);
-                }
-                if (origin instanceof RouterIPv6) {
-                    origin.getCommonLinkWith(message.getSender()).setColor(Color.BLUE);
-                }
-            }
-            else {
-                origin.getCommonLinkWith(message.getSender()).setColor(Color.GREEN);
-            }
+        if(needToPerform) {
+            int randomNumber = random.nextInt(routersList.size());
+            Router parent = routersList.get(randomNumber);
+            routersList.remove(parent);
+            parent.spanningTreeInit(this);
+            return true;
         }
-
-        return parent;
+        else
+            return false;
     }
 }

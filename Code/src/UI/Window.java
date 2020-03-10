@@ -3,6 +3,7 @@ package UI;
 import Algorithms.ExactAlgorithm;
 import Algorithms.GloutonAlgorithm;
 
+import Algorithms.SpanningTreeDistributed;
 import io.jbotsim.core.Link;
 import io.jbotsim.core.Node;
 import io.jbotsim.core.Topology;
@@ -178,7 +179,12 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         if(actionEvent.getSource() == distributedAlgorithm) {
             SavingRouter();
 
-//  Distributed Algorithm function call
+            SpanningTreeDistributed algorithm = new SpanningTreeDistributed(tp);
+            for(Node node : tp.getNodes()) {
+                Router router = (Router) node;
+                router.spanningTreeCreation = true;
+            }
+            algorithm.newSpanningTree();
 
             RedoingTheNetwork();
         }

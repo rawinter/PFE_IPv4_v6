@@ -1,5 +1,6 @@
 import Algorithms.ExactAlgorithm;
 import Algorithms.GloutonAlgorithm;
+import Algorithms.SpanningTreeDistributed;
 import UI.*;
 import io.jbotsim.core.*;
 import io.jbotsim.core.event.CommandListener;
@@ -104,7 +105,12 @@ public class Main implements SelectionListener, StartListener, CommandListener {
             glouton.algorithm();
         }
         if(s.equals(ALGORITHM_DISTRIBUTE)){
-            //Where to launch the algorithm
+            SpanningTreeDistributed algorithm = new SpanningTreeDistributed(tp);
+            for(Node node : tp.getNodes()) {
+                Router router = (Router) node;
+                router.spanningTreeCreation = true;
+            }
+            algorithm.newSpanningTree();
         }
         if(s.equals(ALGORITHM_MACHINE_LEARNING)){
             //Where to launch the algorithm
