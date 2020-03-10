@@ -3,7 +3,6 @@ package UI;
 import Algorithms.SpanningTreeDistributed;
 import DataStructure.MessageContentIPv4;
 import DataStructure.MessageContentIPv6;
-import DataStructure.SpanningTreeStructure;
 import io.jbotsim.core.*;
 
 import java.util.ArrayList;

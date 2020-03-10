@@ -14,7 +14,6 @@ import java.util.Random;
 
 public class Main implements SelectionListener, StartListener, CommandListener {
 
-    static final String ALGORITHM_NON_DETERMINISTIC = "Algorithm Glouton";
     static final String ALGORITHM_DISTRIBUTE = "Distributed Algorithm";
     static final String ALGORITHM_MACHINE_LEARNING = "Algorithm machine learning";
     static final String ALGORITHM_PROB = "Algorithm prob";
@@ -31,6 +30,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
     static final String PRETREATMENT = "Pretreatment of the graph";
     Topology tp;
     Router start;
+    Window win;
     public boolean converter = false;
 
     public Main() {
@@ -40,25 +40,10 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         tp.addSelectionListener(this);
         tp.addStartListener(this);
         tp.addCommandListener(this);
-        Window win = new Window(tp);
+        win = new Window(tp);
         tp.removeAllCommands();
         tp.addCommand("Save topology");
         tp.addCommand("Load topology");
-        tp.addCommand("-"); //:COMMENT:Add a line to separate the commands
-
-        tp.addCommand(ADD_IPV4);
-        tp.addCommand(ADD_IPV6);
-        tp.addCommand(CONVERTER);
-        tp.addCommand(PRETREATMENT);
-        tp.addCommand("-");
-        tp.addCommand(ALGORITHM_NON_DETERMINISTIC);
-        tp.addCommand(ALGORITHM_DISTRIBUTE);
-        tp.addCommand(ALGORITHM_MACHINE_LEARNING);
-        tp.addCommand(ALGORITHM_PROB);
-        tp.addCommand(ALGORITHM_EXACT);
-        tp.addCommand(COVERING_TREE);
-        tp.addCommand("-");
-        tp.addCommand(NETWORK_GENERATION);
 
         tp.start();
     }
@@ -97,13 +82,6 @@ public class Main implements SelectionListener, StartListener, CommandListener {
 
     @Override
     public void onCommand(String s) {
-        if(s.equals(ALGORITHM_NON_DETERMINISTIC)){
-            //Where to launch the algorithm
-            //NonDeterministicAlgorithm non_deterministic = new NonDeterministicAlgorithm(tp);
-            //non_deterministic.algorithm();
-            GloutonAlgorithm glouton = new GloutonAlgorithm(tp);
-            glouton.algorithm();
-        }
         if(s.equals(ALGORITHM_DISTRIBUTE)){
             SpanningTreeDistributed algorithm = new SpanningTreeDistributed(tp);
             for(Node node : tp.getNodes()) {
@@ -145,37 +123,6 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
         if(s.equals(NETWORK_GENERATION)){
 
-            tp.addCommand(NETWORK_GENERATION_10);
-            tp.addCommand(NETWORK_GENERATION_20);
-            tp.addCommand(NETWORK_GENERATION_30);
-            tp.removeCommand(NETWORK_GENERATION);
-        }
-        if(s.equals(NETWORK_GENERATION_10)){
-
-//            NetworkGeneration(10,tp);
-            System.out.println("Generation");
-            tp.removeCommand(NETWORK_GENERATION_10);
-            tp.removeCommand(NETWORK_GENERATION_20);
-            tp.removeCommand(NETWORK_GENERATION_30);
-            tp.addCommand(NETWORK_GENERATION);
-        }
-        if(s.equals(NETWORK_GENERATION_20)){
-
-//            NetworkGeneration(20,tp);
-            System.out.println("Generation");
-            tp.removeCommand(NETWORK_GENERATION_10);
-            tp.removeCommand(NETWORK_GENERATION_20);
-            tp.removeCommand(NETWORK_GENERATION_30);
-            tp.addCommand(NETWORK_GENERATION);
-        }
-        if(s.equals(NETWORK_GENERATION_30)){
-
-//            NetworkGeneration(30,tp);
-            System.out.println("Generation");
-            tp.removeCommand(NETWORK_GENERATION_10);
-            tp.removeCommand(NETWORK_GENERATION_20);
-            tp.removeCommand(NETWORK_GENERATION_30);
-            tp.addCommand(NETWORK_GENERATION);
         }
 
         if(s.equals(PRETREATMENT)){

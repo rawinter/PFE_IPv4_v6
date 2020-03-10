@@ -93,7 +93,7 @@ public class RouterIPv6 extends Router {
 
     @Override
     public String toString() {
-        return super.toString() + " IPv6";
+        return super.toString();
     }
 
     @Override

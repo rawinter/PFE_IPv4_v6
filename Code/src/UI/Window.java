@@ -24,9 +24,9 @@ public class Window extends JViewer implements ActionListener, ItemListener {
     private JMenu algorithm = new JMenu("Algorithm");
 
 
-    private JMenuItem gloutonAlgorithm = new JMenuItem("Lauch glouton algorithm");
-    private JMenuItem distributedAlgorithm = new JMenuItem("Lauch distributed algorithm");
-    private JMenuItem exactAlgorithm = new JMenuItem("Lauch exact algorithm");
+    private JMenuItem gloutonAlgorithm = new JMenuItem("Launch glouton algorithm");
+    private JMenuItem distributedAlgorithm = new JMenuItem("Launch distributed algorithm");
+    private JMenuItem exactAlgorithm = new JMenuItem("Launch exact algorithm");
     private JMenuItem save = new JMenuItem("Save network");
     private JMenuItem load = new JMenuItem("Load network");
 
@@ -37,6 +37,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
     private JMenuItem stopConverter = new JMenuItem("Stop adding converter");
     private JMenuItem IPv4 = new JMenuItem("Adding IPv4 Router");
     private JMenuItem IPv6 = new JMenuItem("Adding IPv6 Router");
+    private JMenuItem pretreatment = new JMenuItem("Pretreatment");
 
 
     Topology tp;
@@ -47,6 +48,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
     double x = window.getWidth();
     double y = window.getHeight();
     int nbIPv4 = 10,nbIPv6 = 10;
+    boolean saved = false;
 
 
 
@@ -94,6 +96,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         stopConverter.setEnabled(false);
 
         algorithm.add(treeConnexite);
+        algorithm.add(pretreatment);
         algorithm.addSeparator();
         algorithm.add(gloutonAlgorithm);
         algorithm.add(distributedAlgorithm);
@@ -115,6 +118,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         converter.addActionListener(this);
         stopConverter.addActionListener(this);
         treeConnexite.addActionListener(this);
+        pretreatment.addActionListener(this);
         gloutonAlgorithm.addActionListener(this);
         distributedAlgorithm.addActionListener(this);
         exactAlgorithm.addActionListener(this);
@@ -169,33 +173,47 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             tp.executeCommand("Stop placing Converter");
         }
         if(actionEvent.getSource() == gloutonAlgorithm) {
-            SavingRouter();
+            if(!connexity(tp)){
+                System.out.println("the graph is not connexe can't continue");
+            }
+            else {
+                SavingRouter();
 
-            GloutonAlgorithm glouton = new GloutonAlgorithm(tp);
-            glouton.algorithm();
+                GloutonAlgorithm glouton = new GloutonAlgorithm(tp);
+                glouton.algorithm();
 
-            RedoingTheNetwork();
+                RedoingTheNetwork();
+            }
         }
         if(actionEvent.getSource() == distributedAlgorithm) {
-            SavingRouter();
-
-            SpanningTreeDistributed algorithm = new SpanningTreeDistributed(tp);
-            for(Node node : tp.getNodes()) {
-                Router router = (Router) node;
-                router.spanningTreeCreation = true;
+            if(!connexity(tp)){
+                System.out.println("the graph is not connexe can't continue");
             }
-            algorithm.newSpanningTree();
+            else {
+                SavingRouter();
 
-            RedoingTheNetwork();
+                SpanningTreeDistributed algorithm = new SpanningTreeDistributed(tp);
+                for (Node node : tp.getNodes()) {
+                    Router router = (Router) node;
+                    router.spanningTreeCreation = true;
+                }
+                algorithm.newSpanningTree();
+
+                RedoingTheNetwork();
+            }
         }
         if(actionEvent.getSource() == exactAlgorithm) {
-            SavingRouter();
-            Pretreatment(tp);
+            if(!connexity(tp)){
+                System.out.println("the graph is not connexe can't continue");
+            }
+            else {
+//                SavingRouter();
 
-//            ExactAlgorithm exact = new ExactAlgorithm(tp);
-//            exact.algorithm();
+            ExactAlgorithm exact = new ExactAlgorithm(tp);
+            exact.algorithm();
 
-            RedoingTheNetwork();
+//                RedoingTheNetwork();
+            }
         }
         if(actionEvent.getSource() == treeConnexite){
             tp.executeCommand("Find every Connected Component");
@@ -205,6 +223,16 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         }
         if(actionEvent.getSource() == load){
             tp.executeCommand("Load topology");
+        }
+        if(actionEvent.getSource() == pretreatment){
+            if(!saved) {
+                SavingRouter();
+                saved = true;
+            }
+            else{
+                RedoingTheNetwork();
+                saved = false;
+            }
         }
     }
 
@@ -277,15 +305,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             java.util.List<Node> nodesToTest = new ArrayList<>();
             List<Node> nodesMarked = new ArrayList<>();
             nodesToTest.add(tp.getNodes().get(0));
-            while (!nodesToTest.isEmpty()) {
-                Node currentNode = nodesToTest.remove(0);
-                nodesMarked.add(currentNode);
-                for(Node n : currentNode.getNeighbors()){
-                    if(!nodesToTest.contains(n) && !nodesMarked.contains(n)){
-                        nodesToTest.add(n);
-                    }
-                }
-            }
+            markNodes(nodesToTest, nodesMarked);
             valid = true;
             for (Node n : tp.getNodes()) {
                 if (!nodesMarked.contains(n)) {
@@ -364,13 +384,40 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             System.out.println("Adding IPv4 UI.Router");
         }
         else
-            if(itemEvent.getItem().equals("Router IPv6")){
-                tp.setDefaultNodeModel(RouterIPv6.class);
-                System.out.println("Adding IPv6 UI.Router");
+        if(itemEvent.getItem().equals("Router IPv6")){
+            tp.setDefaultNodeModel(RouterIPv6.class);
+            System.out.println("Adding IPv6 UI.Router");
+        }
+        else {
+            Algo = (String) itemEvent.getItem();
+        }
+    }
+
+    public boolean connexity(Topology tp) {
+        boolean valid = true;
+        List<Node> nodesToTest = new ArrayList<>();
+        List<Node> nodesMarked = new ArrayList<>();
+        nodesToTest.add(tp.getNodes().get(0));
+        markNodes(nodesToTest, nodesMarked);
+        for (Node n : tp.getNodes()) {
+            if (!nodesMarked.contains(n)) {
+                valid = false;
+                break;
             }
-            else {
-                Algo = (String) itemEvent.getItem();
+        }
+        return valid;
+    }
+
+    private void markNodes(List<Node> nodesToTest, List<Node> nodesMarked) {
+        while (!nodesToTest.isEmpty()) {
+            Node currentNode = nodesToTest.remove(0);
+            nodesMarked.add(currentNode);
+            for(Node n : currentNode.getNeighbors()){
+                if(!nodesToTest.contains(n) && !nodesMarked.contains(n)){
+                    nodesToTest.add(n);
+                }
             }
+        }
     }
 
 }

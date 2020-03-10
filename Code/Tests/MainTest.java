@@ -52,41 +52,41 @@ class MainTest {
     }
 
 //    Testing of the network generation
-    @Test
-    void networkGeneration(){
-        Main main = new Main();
-        main.onCommand(Main.NETWORK_GENERATION);
-        assertFalse(main.tp.getNodes().isEmpty());
-        assertFalse(main.tp.getLinks().isEmpty());
-    }
-
-
-//    Testing for the connexite of a generated network
-    @Test
-    void Connexite(){
-        Main main = new Main();
-        main.onCommand(Main.NETWORK_GENERATION);
-        boolean valid = true;
-        List<Node> nodesToTest = new ArrayList<>();
-        List<Node> nodesMarked = new ArrayList<>();
-        nodesToTest.add(main.tp.getNodes().get(0));
-        while (!nodesToTest.isEmpty()) {
-            Node currentNode = nodesToTest.remove(0);
-            nodesMarked.add(currentNode);
-            for(Node n : currentNode.getNeighbors()){
-                if(!nodesToTest.contains(n) && !nodesMarked.contains(n)){
-                    nodesToTest.add(n);
-                }
-            }
-        }
-        for (Node n : main.tp.getNodes()) {
-            if (!nodesMarked.contains(n)) {
-                valid = false;
-                break;
-            }
-        }
-        assertTrue(valid);
-    }
+//    @Test
+//    void networkGeneration(){
+//        Main main = new Main();
+//        main.onCommand(Main.NETWORK_GENERATION);
+//        assertFalse(main.tp.getNodes().isEmpty());
+//        assertFalse(main.tp.getLinks().isEmpty());
+//    }
+//
+//
+////    Testing for the connexite of a generated network
+//    @Test
+//    void Connexite(){
+//        Main main = new Main();
+//        main.onCommand(Main.NETWORK_GENERATION);
+//        boolean valid = true;
+//        List<Node> nodesToTest = new ArrayList<>();
+//        List<Node> nodesMarked = new ArrayList<>();
+//        nodesToTest.add(main.tp.getNodes().get(0));
+//        while (!nodesToTest.isEmpty()) {
+//            Node currentNode = nodesToTest.remove(0);
+//            nodesMarked.add(currentNode);
+//            for(Node n : currentNode.getNeighbors()){
+//                if(!nodesToTest.contains(n) && !nodesMarked.contains(n)){
+//                    nodesToTest.add(n);
+//                }
+//            }
+//        }
+//        for (Node n : main.tp.getNodes()) {
+//            if (!nodesMarked.contains(n)) {
+//                valid = false;
+//                break;
+//            }
+//        }
+//        assertTrue(valid);
+//    }
 
 //    Testing of the command to place converter
     @Test

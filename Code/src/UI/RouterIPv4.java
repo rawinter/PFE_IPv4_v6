@@ -93,7 +93,7 @@ public class RouterIPv4 extends Router {
 
     @Override
     public String toString() {
-        return super.toString() + " IPv4";
+        return super.toString();
     }
 
     @Override
