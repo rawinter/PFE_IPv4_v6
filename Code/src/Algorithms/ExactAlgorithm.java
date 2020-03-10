@@ -55,7 +55,7 @@ public class ExactAlgorithm implements AlgorithmModel {
         }
         if (k == arr.size() -1){
             combinations.add(tmp);
-           // System.out.println(combinations.toString());
+            // System.out.println(combinations.toString());
         }
     }
 
@@ -136,30 +136,30 @@ public class ExactAlgorithm implements AlgorithmModel {
             for(List <Integer> permutate : combinations){
                 for(int object=0;object<converterTo;object++){
 
-                        //System.out.println(converterTo+ " nombre de converter a placer");
-                        System.out.println(permutate);
-                        Node n = tp.getNodes().get(permutate.get(object));
-                        Router r = (Router) n;
-                        r.addConverter();
+                    //System.out.println(converterTo+ " nombre de converter a placer");
+                    System.out.println(permutate);
+                    Node n = tp.getNodes().get(permutate.get(object));
+                    Router r = (Router) n;
+                    r.addConverter();
 
-                    }
-                    if(canCommunicate(tp)) {
-                        //System.out.println(converterTo + "nombre de convertisseur a placer \n ");
-                        //System.out.println("J ai reussi le placement avec la combinaison suivante\n");
-                       // System.out.println(permutate.toString());
-                        for (Node n : nodes) {
-                            Router r = (Router) n;
+                }
+                if(canCommunicate(tp)) {
+                    //System.out.println(converterTo + "nombre de convertisseur a placer \n ");
+                    //System.out.println("J ai reussi le placement avec la combinaison suivante\n");
+                    // System.out.println(permutate.toString());
+                    for (Node n : nodes) {
+                        Router r = (Router) n;
                             /*if (r.hasConverter()) {
                                 System.out.println("le routeur" + r.getID() + " a un convertisseur");
                             }*/
-                        }
-                        return 0;
                     }
-                    else {
-                        for (Node n : nodes) {
-                            Router r = (Router) n;
-                            r.setConverter();
-                        }
+                    return 0;
+                }
+                else {
+                    for (Node n : nodes) {
+                        Router r = (Router) n;
+                        r.setConverter();
+                    }
 
                 }
             }
