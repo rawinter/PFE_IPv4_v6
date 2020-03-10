@@ -130,11 +130,10 @@ public class ExactAlgorithm implements AlgorithmModel {
         /*for(ArrayList<Integer> permutation: this.combinations){
            System.out.println(permutation.toString());
         }*/
-        for(int converter=1;converter<nodes.size();converter++){
-            int converterTo=converter;
+
             //System.out.println(converterTo+ " nombre de converter a placer");
             for(List <Integer> permutate : combinations){
-                for(int object=0;object<converterTo;object++){
+                for(int object=0;object<permutate.size();object++){
 
                     //System.out.println(converterTo+ " nombre de converter a placer");
                     System.out.println(permutate);
@@ -163,7 +162,7 @@ public class ExactAlgorithm implements AlgorithmModel {
 
                 }
             }
-        }
+
         return 0;
     }
 }
