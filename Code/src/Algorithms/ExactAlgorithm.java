@@ -1,5 +1,6 @@
 package Algorithms;
 
+import UI.ConnectedComponent;
 import UI.Router;
 import UI.RouterIPv4;
 import UI.RouterIPv6;
@@ -59,12 +60,19 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
         // Call the recursice function
         CombinationRepetitionUtil(chosen, list, 0, r, 0, n - 1);
     }
+
+    public void placeConverterOnRouterExact(Topology tp,Router r){
+        r.addConverter();
+    }
+
     public int algorithm() {
         List <Node> nodes = NodeCandidates();
         for (int i=0;i<nodes.size();i++){
             candidatsNodes.add(nodes.get(i).getID());
         }
-        setConnectedComponents(getConnectedComponents(getTopology()));
+        Topology tp= getTopology();
+        ArrayList<ConnectedComponent> connectedComponents=getConnectedComponents(getTopology());
+        setConnectedComponents(connectedComponents);
         defineConverterToPlace();
         for(int k=1;k<getNbConverterToplace();k++) {
             CombinationRepetition(candidatsNodes, candidatsNodes.size(), k);
@@ -72,14 +80,17 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
                 for (int object = 0; object < permutate.size(); object++) {
                     Node n = this.getTopology().getNodes().get(permutate.get(object));
                     Router r = (Router) n;
-                    placeConverterOnRouter(getTopology(), r);
+                    placeConverterOnRouterExact(getTopology(), r);
                 }
+                resetConnectedComponents(tp);
+                setConnectedComponents(getConnectedComponents(tp));
                 if (this.getComponent().size() == 1) {
                     return 0;
                 } else {
                     for (Node n : nodes) {
                         Router r = (Router) n;
                         r.setConverter();
+                        this.setConnectedComponents(connectedComponents);
                     }
                 }
             }

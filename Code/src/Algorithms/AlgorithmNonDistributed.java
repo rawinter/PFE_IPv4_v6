@@ -127,7 +127,9 @@ public abstract class AlgorithmNonDistributed  {
                     candidatesLinks.add(l);
             }
         }
-        countCandidatesLink(tp);
+        if (this instanceof GloutonAlgorithm) {
+            countCandidatesLink(tp);
+        }
     }
 
 
@@ -139,6 +141,8 @@ public abstract class AlgorithmNonDistributed  {
         setConnectedComponents(getConnectedComponents(tp));
         candidatLink(tp);
     }
+
+
 
 
 
