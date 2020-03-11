@@ -52,7 +52,6 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
     }
 
     static void CombinationRepetition(ArrayList <Integer> list, int n, int r) {
-        // Allocate memory
         ArrayList<Integer> chosen = new ArrayList<>();
         for(int i=0;i<list.size();i++){
             chosen.add(0);
@@ -60,8 +59,6 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
         // Call the recursice function
         CombinationRepetitionUtil(chosen, list, 0, r, 0, n - 1);
     }
-
-
     public int algorithm() {
         List <Node> nodes = NodeCandidates();
         for (int i=0;i<nodes.size();i++){
@@ -69,28 +66,24 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
         }
         setConnectedComponents(getConnectedComponents(getTopology()));
         defineConverterToPlace();
-
-        for(int k=1;k<= getNbConverterToplace();k++){
+        for(int k=1;k<getNbConverterToplace();k++) {
             CombinationRepetition(candidatsNodes, candidatsNodes.size(), k);
-        }
-        //System.out.println(combinations.toString());
-
-        for(List <Integer> permutate : combinations){
-            for(int object=0;object<permutate.size();object++){
-                Node n = this.getTopology().getNodes().get(permutate.get(object));
-                Router r = (Router) n;
-                placeConverterOnRouter(getTopology(),r);
-            }
-            if(this.getComponent().size()==1) {
-                return 0;
-            }
-            else {
-                for (Node n : nodes) {
+            for (List<Integer> permutate : combinations) {
+                for (int object = 0; object < permutate.size(); object++) {
+                    Node n = this.getTopology().getNodes().get(permutate.get(object));
                     Router r = (Router) n;
-                    r.setConverter();
+                    placeConverterOnRouter(getTopology(), r);
                 }
-
+                if (this.getComponent().size() == 1) {
+                    return 0;
+                } else {
+                    for (Node n : nodes) {
+                        Router r = (Router) n;
+                        r.setConverter();
+                    }
+                }
             }
+            combinations = new ArrayList<>();
         }
         return 0;
     }
