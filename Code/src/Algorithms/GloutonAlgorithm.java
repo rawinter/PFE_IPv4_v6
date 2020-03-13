@@ -19,6 +19,9 @@ public class GloutonAlgorithm extends AlgorithmNonDistributed {
 
     public GloutonAlgorithm(Topology tp){ super(tp);}
 
+    public int getNumberConnected(){
+        return numberConnectedComponents;
+    }
 
     //:COMMENT : choose the router with the most candidate links
     public Node chooseDegrees(){
@@ -39,15 +42,20 @@ public class GloutonAlgorithm extends AlgorithmNonDistributed {
         r.resetCandidateLinkNumber();
         removeLinkCandidates(tp,r);
         resetConnectedComponents(tp);
-        setConnectedComponents(getConnectedComponents(tp));
+        ArrayList<ConnectedComponent> list=getConnectedComponents(tp);
+        setConnectedComponents(list);
+        setNumberConnectedComponents(getComponent());
         candidatLink(tp);
+    }
+
+    public void setNumberConnectedComponents(ArrayList<ConnectedComponent> list){
+        numberConnectedComponents=list.size();
     }
 
 
     public void algorithm(){
         Topology tp= getTopology();
         candidatLink(tp);
-        setConnectedComponents(getConnectedComponents(tp));
         for(Node n: tp.getNodes()){
             if(n.getNeighbors().size()==1){
                 Router u=(Router)n;
@@ -57,8 +65,11 @@ public class GloutonAlgorithm extends AlgorithmNonDistributed {
                 }
             }
         }
+
         while(getComponent().size()>1){
             placeConverterV1(tp);
         }
+        return;
+
     }
 }

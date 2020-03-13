@@ -15,14 +15,13 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
     public static ArrayList<ArrayList<Integer>> combinations= new ArrayList<ArrayList<Integer>> ();
     public static ArrayList<Integer> candidatsNodes = new ArrayList<Integer>();
     public static int converterToPlace;
-    static ArrayList<Integer> solution=new ArrayList<>();
+    ArrayList<Integer> solution=new ArrayList<>();
 
     public ExactAlgorithm(Topology tp) { super(tp);
         ArrayList<ArrayList<Integer>> combinations = new ArrayList<ArrayList<Integer>> ();
         ArrayList<Integer> candidatsNodes = new ArrayList<Integer> ();}
 
-
-    static void CombinationRepetitionUtil(ArrayList<Integer> chosen, ArrayList<Integer> arr,
+        void CombinationRepetitionUtil(ArrayList<Integer> chosen, ArrayList<Integer> arr,
                                           int index, int r, int start, int end) {
         // Since index has become r, current combination is
         // ready to be printed, print
@@ -45,7 +44,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
                     resetConnectedComponents(tp);
                     setConnectedComponents(getConnectedComponents(tp));
                     if (getConnectedComponents(tp).size() == 1) {
-                        System.out.println("la bonne combinaison est " + id.toString() + "\n");
+                        //System.out.println("la bonne combinaison est " + id.toString() + "\n");
                         solution = id;
                     } else {
                         reinitialiseConverter(candidatsNodes);
@@ -68,7 +67,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
         }
     }
 
-   static void CombinationRepetition(ArrayList <Integer> list, int n, int r) {
+    void CombinationRepetition(ArrayList <Integer> list, int n, int r) {
         ArrayList<Integer> chosen = new ArrayList<>();
         for(int i=0;i<list.size();i++){
             chosen.add(0);
@@ -77,7 +76,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
         CombinationRepetitionUtil(chosen, list, 0, r, 0, n - 1);
     }
 
-    public static void reinitialiseConverter(List<Integer> candidatsNodes){
+    public  void reinitialiseConverter(List<Integer> candidatsNodes){
         for(int i=0;i<candidatsNodes.size();i++){
             for(Node n : tp.getNodes()){
                 if (n.getID()==candidatsNodes.get(i)){
@@ -87,18 +86,22 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
             }
         }
     }
-    public static void setConverter(List<Integer> list){
+
+    public boolean goodSolution(){
+        return solution.size()<=getNbConverterToplace() && getComponent().size()==1;
+    }
+    public  void setConverter(List<Integer> list){
         for(int i=0;i<list.size();i++){
             Node n = tp.getNodes().get(list.get(i));
             Router r = (Router) n;
             placeConverterOnRouterExact(tp, r);
         }
     }
-    public static void placeConverterOnRouterExact(Topology tp, Router r){
+    public  void placeConverterOnRouterExact(Topology tp, Router r){
         r.addConverter();
     }
 
-    public int algorithm() {
+    public boolean algorithm() {
         tp=getTopology();
         List <Node> nodes = NodeCandidates();
         for (int i=0;i<nodes.size();i++){
@@ -113,7 +116,8 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
             CombinationRepetition(candidatsNodes, candidatsNodes.size(), k);
             k++;
         }
-        return 0;
+        System.out.println(goodSolution());
+        return goodSolution();
     }
 }
 

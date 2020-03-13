@@ -17,6 +17,7 @@ public abstract class AlgorithmNonDistributed  {
     private ArrayList<Link> candidatesLinks= new ArrayList<>();
     private List<Node> candidatesNodes = new ArrayList<>();
     private static int converterToPlace;
+    public int numberConnectedComponents;
 
     public AlgorithmNonDistributed (Topology tp){
         this.topology=tp;
@@ -39,7 +40,7 @@ public abstract class AlgorithmNonDistributed  {
 
     public Topology getTopology(){ return topology; }
 
-    public ArrayList<ConnectedComponent> getComponent(){ return components;}
+    public static ArrayList<ConnectedComponent> getComponent(){ return components;}
 
     public static void setConnectedComponents(ArrayList<ConnectedComponent> l){ components= l; }
 
@@ -65,6 +66,7 @@ public abstract class AlgorithmNonDistributed  {
                 cc1.addRouter(router);
             components.add(cc1);
         }
+
         return components;
     }
 
@@ -139,6 +141,7 @@ public abstract class AlgorithmNonDistributed  {
         removeLinkCandidates(tp,r);
         resetConnectedComponents(tp);
         setConnectedComponents(getConnectedComponents(tp));
+
         candidatLink(tp);
     }
 

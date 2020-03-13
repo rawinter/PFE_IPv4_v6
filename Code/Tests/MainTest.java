@@ -1,8 +1,10 @@
+import Algorithms.ExactAlgorithm;
 import UI.Router;
 import UI.RouterIPv4;
 import UI.RouterIPv6;
 import io.jbotsim.core.Link;
 import io.jbotsim.core.Node;
+import io.jbotsim.core.Topology;
 import org.junit.jupiter.api.Test;
 
 import java.awt.event.ActionEvent;
@@ -113,6 +115,21 @@ class MainTest {
         main.onSelection(main.tp.getNodes().get(0));
         assertEquals(main.tp.getNodes().get(0).getIcon(),"Code/Ressources/images/Temp-Converter.png");
     }
+
+    @Test
+    void ExactAlgorithm(){
+        Main main = new Main();
+        main.onCommand(Main.NETWORK_GENERATION);
+        Topology tp=main.tp;
+        ExactAlgorithm exact = new ExactAlgorithm(tp);
+        main.onCommand(Main.ALGORITHM_EXACT);
+        //exact.algorithm();
+        assertTrue(exact.algorithm());
+
+
+
+    }
+
 
 
 }
