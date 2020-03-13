@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AlgorithmNonDistributed  {
-    private Topology topology;
-    private ArrayList<ConnectedComponent> components = new ArrayList<>();
+    private static  Topology topology;
+    private static ArrayList<ConnectedComponent> components = new ArrayList<>();
     private ArrayList<Link> candidatesLinks= new ArrayList<>();
     private List<Node> candidatesNodes = new ArrayList<>();
     private static int converterToPlace;
@@ -41,17 +41,17 @@ public abstract class AlgorithmNonDistributed  {
 
     public ArrayList<ConnectedComponent> getComponent(){ return components;}
 
-    public void setConnectedComponents(ArrayList<ConnectedComponent> l){ components= l; }
+    public static void setConnectedComponents(ArrayList<ConnectedComponent> l){ components= l; }
 
     public List<Node> getCandidatesNodes(){ return candidatesNodes; }
 
-    public void resetConnectedComponents(Topology tp){
+    public static void resetConnectedComponents(Topology tp){
         for(Node n: tp.getNodes()){
             Router r = (Router)n;
             r.setComponent(null);
         }
     }
-    public ArrayList<ConnectedComponent> getConnectedComponents(Topology tp){
+    public static ArrayList<ConnectedComponent> getConnectedComponents(Topology tp){
         ArrayList<ConnectedComponent> components = new ArrayList<>();
         List<Node> nodes = tp.getNodes();
         while(!nodes.isEmpty()){
@@ -68,7 +68,7 @@ public abstract class AlgorithmNonDistributed  {
         return components;
     }
 
-    public ArrayList<Router> recursiveSameClassNeighbor(ArrayList<Router> connected, Router previous, List<Node> nodes) {
+    public static ArrayList<Router> recursiveSameClassNeighbor(ArrayList<Router> connected, Router previous, List<Node> nodes) {
         List<Node> neighbors = previous.getNeighbors();
         for(Router router : connected) {
             if(neighbors.contains(router)) {
