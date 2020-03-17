@@ -145,6 +145,6 @@ public class RouterIPv6 extends Router {
     @Override
     public void setConverter() {
         super.setConverter();
-        setIcon("Code/Ressources/images/Temp-IPv6.png");
+        setIcon("Code/Ressources/images/IPv6.png");
     }
 }

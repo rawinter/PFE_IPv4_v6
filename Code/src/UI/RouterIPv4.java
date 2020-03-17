@@ -146,6 +146,6 @@ public class RouterIPv4 extends Router {
     @Override
     public void setConverter() {
         super.setConverter();
-        setIcon("Code/Ressources/images/Temp-IPv4.png");
+        setIcon("Code/Ressources/images/IPv4.png");
     }
 }

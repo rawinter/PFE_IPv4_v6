@@ -23,18 +23,29 @@ public class Window extends JViewer implements ActionListener, ItemListener {
     private JMenu generation = new JMenu("Generation");
     private JMenu algorithm = new JMenu("Algorithm");
 
+    private JTextField nbConv = new JTextField();
+    private JTextField nbComp = new JTextField();
+
+    private JMenu Legend = new JMenu("Legend");
+    private JMenuItem v4 = new JMenuItem("IPv4 Router");
+    private JMenuItem v6 = new JMenuItem("IPv6 Router");
+    private JMenuItem Conv = new JMenuItem("Router with a converter");
+
 
     private JMenuItem gloutonAlgorithm = new JMenuItem("Launch glouton algorithm");
     private JMenuItem distributedAlgorithm = new JMenuItem("Launch distributed algorithm");
     private JMenuItem exactAlgorithm = new JMenuItem("Launch exact algorithm");
+    private JButton gloutonAlgo = new JButton("Launch glouton algorithm");
+    private JButton distributedAlgo = new JButton("Launch distributed algorithm");
+    private JButton exactAlgo = new JButton("Launch exact algorithm");
     private JMenuItem save = new JMenuItem("Save network");
     private JMenuItem load = new JMenuItem("Load network");
+    private JMenuItem reset = new JMenuItem("Reset the topology");
+    private JMenuItem clear = new JMenuItem("clear");
 
     private JMenuItem treeConnexite = new JMenuItem("Make the connexe component appear");
 
     private JMenuItem networkGeneration = new JMenuItem("Network generation");
-    private JMenuItem converter = new JMenuItem("Adding converter");
-    private JMenuItem stopConverter = new JMenuItem("Stop adding converter");
     private JMenuItem IPv4 = new JMenuItem("Adding IPv4 Router");
     private JMenuItem IPv6 = new JMenuItem("Adding IPv6 Router");
     private JMenuItem pretreatment = new JMenuItem("Pretreatment");
@@ -49,6 +60,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
     double y = window.getHeight();
     int nbIPv4 = 10,nbIPv6 = 10;
     boolean saved = false;
+    Font font = new Font("Garamond", Font.BOLD, 15);
 
 
 
@@ -57,7 +69,6 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         window.addComponentListener(new ComponentListener() {
             @Override
             public void componentResized(ComponentEvent componentEvent) {
-                System.out.println("resized");
                 double propX = window.getWidth()/x;
                 double propY = window.getHeight()/y;
                 for(Node n : tp.getNodes()){
@@ -91,12 +102,11 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         generation.add(networkGeneration);
         generation.add(IPv4);
         generation.add(IPv6);
-        generation.add(converter);
-        generation.add(stopConverter);
-        stopConverter.setEnabled(false);
 
         algorithm.add(treeConnexite);
         algorithm.add(pretreatment);
+        algorithm.add(clear);
+        algorithm.add(reset);
         algorithm.addSeparator();
         algorithm.add(gloutonAlgorithm);
         algorithm.add(distributedAlgorithm);
@@ -105,6 +115,40 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         menuBar.add(menuLoadandSave);
         menuBar.add(generation);
         menuBar.add(algorithm);
+        menuBar.add(gloutonAlgo);
+        menuBar.add(distributedAlgo);
+        menuBar.add(exactAlgo);
+        menuBar.add(nbConv);
+        menuBar.add(nbComp);
+        menuBar.add(Legend);
+        nbConv.setEnabled(false);
+        nbConv.setFont(font);
+        nbComp.setEnabled(false);
+        nbComp.setFont(font);
+//        Legend.setEnabled(false);
+        Legend.setFont(font);
+//        Legend.setText("Green is IPv4, Blue is IPv6 and red is Converter");
+        ImageIcon tmpimg = new ImageIcon("Code/Ressources/images/IPv4.png");
+        Image image = tmpimg.getImage();
+        Image scaledimg = image.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+        tmpimg = new ImageIcon(scaledimg);
+        v4.setIcon(tmpimg);
+        Legend.add(v4);
+        tmpimg = new ImageIcon("Code/Ressources/images/IPv6.png");
+       image = tmpimg.getImage();
+        scaledimg = image.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+        tmpimg = new ImageIcon(scaledimg);
+        v6.setIcon(tmpimg);
+        Legend.add(v6);
+        tmpimg = new ImageIcon("Code/Ressources/images/Converter.png");
+        image = tmpimg.getImage();
+        scaledimg = image.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+        tmpimg = new ImageIcon(scaledimg);
+        Conv.setIcon(tmpimg);
+        Legend.add(Conv);
+        menuBar.add(Legend);
+
+
 
         window.setJMenuBar(menuBar);
 
@@ -115,13 +159,35 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         networkGeneration.addActionListener(this);
         IPv4.addActionListener(this);
         IPv6.addActionListener(this);
-        converter.addActionListener(this);
-        stopConverter.addActionListener(this);
         treeConnexite.addActionListener(this);
         pretreatment.addActionListener(this);
         gloutonAlgorithm.addActionListener(this);
         distributedAlgorithm.addActionListener(this);
         exactAlgorithm.addActionListener(this);
+        gloutonAlgo.addActionListener(this);
+        distributedAlgo.addActionListener(this);
+        exactAlgo.addActionListener(this);
+        clear.addActionListener(this);
+        reset.addActionListener(this);
+
+        load.setFont(font);
+        save.setFont(font);
+        networkGeneration.setFont(font);
+        IPv4.setFont(font);
+        IPv6.setFont(font);
+        treeConnexite.setFont(font);
+        pretreatment.setFont(font);
+        gloutonAlgorithm.setFont(font);
+        distributedAlgorithm.setFont(font);
+        exactAlgorithm.setFont(font);
+        gloutonAlgo.setFont(font);
+        distributedAlgo.setFont(font);
+        exactAlgo.setFont(font);
+        generation.setFont(font);
+        algorithm.setFont(font);
+        menuLoadandSave.setFont(font);
+        clear.setFont(font);
+        reset.setFont(font);
 
         load.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,KeyEvent.CTRL_DOWN_MASK));
         save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK));
@@ -130,14 +196,28 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         window.getContentPane().setBackground(Color.BLACK);
         window.setContentPane(pan);
         window.setExtendedState(Frame.MAXIMIZED_BOTH);
+        jtp.setBackground(Color.white);
         window.add(jtp,BorderLayout.CENTER);
         window.setVisible(true);
+
 
 
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
+        if(actionEvent.getSource() == clear){
+            tp.clear();
+        }
+        if(actionEvent.getSource() == reset){
+            for(Node n : tp.getNodes()){
+                if(n instanceof Router){
+                    if(((Router) n).hasConverter()){
+                        ((Router) n).setConverter();
+                    }
+                }
+            }
+        }
         if(actionEvent.getSource() == IPv6){
             tp.setDefaultNodeModel(RouterIPv6.class);
         }
@@ -161,18 +241,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             }
             NetworkGeneration(tp);
         }
-        if(actionEvent.getSource() == converter){
-            converter.setEnabled(false);
-            stopConverter.setEnabled(true);
-            tp.executeCommand("Place Converter");
-
-        }
-        if(actionEvent.getSource() == stopConverter){
-            converter.setEnabled(true);
-            stopConverter.setEnabled(false);
-            tp.executeCommand("Stop placing Converter");
-        }
-        if(actionEvent.getSource() == gloutonAlgorithm) {
+        if(actionEvent.getSource() == gloutonAlgorithm || actionEvent.getSource() == gloutonAlgo) {
             if(!connexity(tp)){
                 System.out.println("the graph is not connexe can't continue");
             }
@@ -185,27 +254,25 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 RedoingTheNetwork();
             }
         }
-        if(actionEvent.getSource() == distributedAlgorithm) {
+        if(actionEvent.getSource() == distributedAlgorithm || actionEvent.getSource() == distributedAlgo) {
             if(!connexity(tp)){
                 System.out.println("the graph is not connexe can't continue");
             }
             else {
-                //SavingRouter();
+                SavingRouter();
 
                 SpanningTreeDistributed algorithm = new SpanningTreeDistributed(tp);
-                algorithm.setupNewResearch();
-                boolean checkEnd = algorithm.newSpanningTree();
-                /*if(checkEnd) {
-                    algorithm.findPotentialConverter();
-                }*/
+                for (Node node : tp.getNodes()) {
+                    Router router = (Router) node;
+                    router.spanningTreeCreation = true;
+                }
+                algorithm.newSpanningTree();
 
-                //Il suffit de faire un booléen dans la fonction newSpanningTree() de l'algo pour voir si c'est le dernier appel pour faire RedoingTheNetwork()
-                //De plus, il faut gérer le rajout des noeuds dans la topologie et faire en sorte de bien les ajouter dans les composantes connexes correspondantes
-                //RedoingTheNetwork();
+                RedoingTheNetwork();
             }
         }
-        if(actionEvent.getSource() == exactAlgorithm) {
-            /*if(!connexity(tp)){
+        if(actionEvent.getSource() == exactAlgorithm || actionEvent.getSource() == exactAlgo) {
+            if(!connexity(tp)){
                 System.out.println("the graph is not connexe can't continue");
             }
             else {
@@ -215,8 +282,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             exact.algorithm();
 
 //                RedoingTheNetwork();
-            }*/
-            SavingRouter();
+            }
         }
         if(actionEvent.getSource() == treeConnexite){
             tp.executeCommand("Find every Connected Component");
@@ -254,6 +320,16 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         for(Link l : links){
             tp.addLink(l);
         }
+        int c = 0;
+        for(Node n : tp.getNodes()){
+            if(n instanceof Router){
+                if(((Router) n).hasConverter()){
+                    c++;
+                }
+            }
+        }
+        nbConv.setText("Number of converter : " + c);
+        nbConv.setHorizontalAlignment(JTextField.CENTER);
     }
 
     private void SavingRouter() {

@@ -16,6 +16,7 @@ public class NetworkSerializer implements TopologySerializer {
         StringBuffer res = new StringBuffer();
         res.append("cR " + topology.getCommunicationRange() + "\n");
         res.append("sR " + topology.getSensingRange() + "\n");
+        res.append("width " + topology.getWidth() + ":  height " + topology.getHeight() + "\n");
         Iterator var3 = topology.getNodes().iterator();
 
         while(var3.hasNext()){
@@ -53,18 +54,24 @@ public class NetworkSerializer implements TopologySerializer {
         data = data.substring(data.indexOf("\n") + 1);
         topology.setSensingRange(Double.parseDouble(data.substring(data.indexOf(" ") + 1, data.indexOf("\n"))));
         data = data.substring(data.indexOf("\n") + 1);
+        double X = Double.parseDouble(data.substring(data.indexOf("width") + 6, data.indexOf(":")));
+        double Y = Double.parseDouble(data.substring(data.indexOf("height") + 7, data.indexOf("\n")));
+        data = data.substring(data.indexOf("\n") + 1);
         HashMap nodeTable = new HashMap();
 
         while(data.indexOf("[") > 0) {
-            double x = new Double(data.substring(data.indexOf("x") + 3, data.indexOf(", y")));
+            double propX = topology.getWidth()/X;
+            double propY = topology.getHeight()/Y;
+            double x = (new Double(data.substring(data.indexOf("x") + 3, data.indexOf(", y")))) * propX;
             double y = 0.0D;
             double z = 0.0D;
+
             double IpType = 0.0D;
             if (data.contains("z")) {
-                y = new Double(data.substring(data.indexOf("y") + 3, data.indexOf(", z")));
+                y = (new Double(data.substring(data.indexOf("y") + 3, data.indexOf(", z")))) * propY;
                 z = new Double(data.substring(data.indexOf("z") + 3, data.indexOf("]")));
             } else {
-                y = new Double(data.substring(data.indexOf("y") + 3, data.indexOf("]")));
+                y = (new Double(data.substring(data.indexOf("y") + 3, data.indexOf("]")))) * propY;
             }
             IpType = new Double(data.substring(data.indexOf("IpType") + 7,data.indexOf("\n")));
 
