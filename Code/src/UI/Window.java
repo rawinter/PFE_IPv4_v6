@@ -190,20 +190,22 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 System.out.println("the graph is not connexe can't continue");
             }
             else {
-                SavingRouter();
+                //SavingRouter();
 
                 SpanningTreeDistributed algorithm = new SpanningTreeDistributed(tp);
-                for (Node node : tp.getNodes()) {
-                    Router router = (Router) node;
-                    router.spanningTreeCreation = true;
-                }
-                algorithm.newSpanningTree();
+                algorithm.setupNewResearch();
+                boolean checkEnd = algorithm.newSpanningTree();
+                /*if(checkEnd) {
+                    algorithm.findPotentialConverter();
+                }*/
 
-                RedoingTheNetwork();
+                //Il suffit de faire un booléen dans la fonction newSpanningTree() de l'algo pour voir si c'est le dernier appel pour faire RedoingTheNetwork()
+                //De plus, il faut gérer le rajout des noeuds dans la topologie et faire en sorte de bien les ajouter dans les composantes connexes correspondantes
+                //RedoingTheNetwork();
             }
         }
         if(actionEvent.getSource() == exactAlgorithm) {
-            if(!connexity(tp)){
+            /*if(!connexity(tp)){
                 System.out.println("the graph is not connexe can't continue");
             }
             else {
@@ -213,7 +215,8 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             exact.algorithm();
 
 //                RedoingTheNetwork();
-            }
+            }*/
+            SavingRouter();
         }
         if(actionEvent.getSource() == treeConnexite){
             tp.executeCommand("Find every Connected Component");

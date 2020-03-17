@@ -1,31 +1,33 @@
 package UI;
 
 import Algorithms.SpanningTreeDistributed;
-import DataStructure.MessageContentIPv4;
-import DataStructure.MessageContentIPv6;
+import DataStructure.MessageContent;
 import io.jbotsim.core.*;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class Router extends Node {
     public boolean Converter = false;
-    public ConnectedComponent component=null;
-    public int candidateLinkNumber=0;
-    public boolean marked=false;
-    //:COMMENT:Needed for the spanning Tree method
-    Router parent = null;
-    ArrayList<Router> componentRouter;
-    public static final Object lock = new Object();
+    public ConnectedComponent component = null;
+    public int candidateLinkNumber = 0;
+    public boolean marked = false;
+
+    //:COMMENT:Needed for the spanning Tree method (Distributed)
+    public Router parent = null;
     //
 
-    //:COMMENT:Needed for the aggregation
+    //:COMMENT:Needed for the aggregation of the component (Distributed)
+    public SpanningTreeDistributed algorithm; //:COMMENT:Only use by the parent
     public ArrayList<Router> children = new ArrayList<>();
     public ArrayList<Router> childrenCopy = new ArrayList<>();
-    public boolean spanningTreeCreation = false;
-    public boolean aggregation = false;
-    ArrayList<Router> finalComponent = new ArrayList<>();
-    public SpanningTreeDistributed algorithm; //:COMMENT:Only use by the parent
+    public ArrayList<Integer> componentNeighbor = new ArrayList<>();
+    public HashMap<Router, Integer> finalComponent = new HashMap<>();
+    public int componentNumber;
+    public Router needToBeConverter;
+    public boolean spanningTreeCreation;
+    public boolean countCandidateLink;
+    public boolean placingConverter;
     //
 
     @Override
@@ -40,39 +42,7 @@ public class Router extends Node {
 
     @Override
     public void onClock() {
-        if(aggregation) {
-            if(childrenCopy.isEmpty()) {
-                ArrayList<Router> ownComponent = new ArrayList<>();
-                ownComponent.add(this);
-                if(parent != this) {
-                    if(this instanceof RouterIPv4) {
-                        MessageContentIPv4 content = new MessageContentIPv4("AggregationIPv4");
-                        content.setComponent(ownComponent);
-                        send(parent, new Message(content, "IPv4"));
-                    }
-                    if(this instanceof RouterIPv6) {
-                        MessageContentIPv6 content = new MessageContentIPv6("AggregationIPv6");
-                        content.setComponent(ownComponent);
-                        send(parent, new Message(content, "IPv6"));
-                    }
-                    spanningTreeCreation = false;
-                    aggregation = false;
-                }
-                else {
-                    finalComponent.add(this);
-                    aggregation = false;
-                    spanningTreeCreation = false;
-                    System.out.println("-------------------------------");
-                    System.out.println("Component of the node " + this.getID() + " :");
-                    for (Router router : finalComponent) {
-                        System.out.print(" " + router.getID() + ",");
-                    }
-                    System.out.println(".");
-                    System.out.println("-------------------------------");
-                    algorithm.newSpanningTree();
-                }
-            }
-        }
+        super.onClock();
     }
 
     @Override
@@ -80,92 +50,287 @@ public class Router extends Node {
         super.onMessage(message);
     }
 
-    public void addConverter(){Converter = true;}
+    public void addConverter() {
+        Converter = true;
+    }
 
-    public boolean hasConverter(){
+    public boolean hasConverter() {
         return Converter;
     }
 
-    public void setCandidateLinkNumberCandidate(int i){ candidateLinkNumber=i; }
+    public void setCandidateLinkNumberCandidate(int i) {
+        candidateLinkNumber = i;
+    }
 
-    public int getCandidateLinkNumber(){ return candidateLinkNumber; }
+    public int getCandidateLinkNumber() {
+        return candidateLinkNumber;
+    }
 
-    public ConnectedComponent getComponent(){return component; }
+    public ConnectedComponent getComponent() {
+        return component;
+    }
 
-    public void resetCandidateLinkNumber(){
-        candidateLinkNumber=0;
-        for (Node n : this.getNeighbors()){
-            Router r= (Router)n;
-            if(r instanceof RouterIPv4 && this instanceof RouterIPv6 || r instanceof RouterIPv6 && this instanceof RouterIPv4)
+    public void resetCandidateLinkNumber() {
+        candidateLinkNumber = 0;
+        for (Node n : this.getNeighbors()) {
+            Router r = (Router) n;
+            if (r instanceof RouterIPv4 && this instanceof RouterIPv6 || r instanceof RouterIPv6 && this instanceof RouterIPv4)
                 r.decrementCandidateLinkNumber();
         }
     }
 
-    public void decrementCandidateLinkNumber(){candidateLinkNumber--;}
+    public void decrementCandidateLinkNumber() {
+        candidateLinkNumber--;
+    }
 
-    public void setComponent(ConnectedComponent cc){ component=cc; }
+    public void setComponent(ConnectedComponent cc) {
+        component = cc;
+    }
 
-    public void setConverter(){
-        this.Converter=false;
+    public void setConverter() {
+        this.Converter = false;
     }
 
     public Router getParent() {
         return parent;
     }
 
-    public void spanningTreeInit(SpanningTreeDistributed algorithm) {
-        parent = this;
-        this.algorithm = algorithm;
-        for(Node node : this.getNeighbors()) {
-            Router router = (Router) node;
-            children.add(router);
-            childrenCopy.add(router);
-        }
-        if(this instanceof RouterIPv4) {
-            MessageContentIPv4 messageContent = new MessageContentIPv4("TreeCreationIPv4");
-            sendAll(new Message(messageContent, "IPv4"));
-        }
-        else {
-            MessageContentIPv6 messageContent = new MessageContentIPv6("TreeCreationIPv6");
-            sendAll(new Message(messageContent, "IPv6"));
-        }
-    }
-
-    public String spanningTreeCreation(Message message, Router origin) {
+    public String messageHandler(Message message, Router origin) {
+        MessageContent content = (MessageContent) message.getContent();
         if (message.getFlag().equals("IPv4")) {
-            MessageContentIPv4 content = (MessageContentIPv4) message.getContent();
-            if (!origin.getClass().equals(message.getSender().getClass())) {
-                return "Error language";
-            }
-            else if(content.getCommandIPv4().equals("AggregationIPv4") && origin instanceof RouterIPv4) {
-                return "AggregationIPv4";
-            }
-            else if(content.getCommandIPv4().equals("TreeCreationIPv4") && origin instanceof RouterIPv4) {
-                if (origin.getParent() == null) {
-                    return "Sender is new parent";
-                } else {
-                    return "Already got a parent";
+            Router sender = (Router) message.getSender();
+            if (origin.hasConverter() == true || sender.hasConverter() == true || origin.getClass().equals(sender.getClass())) {
+                if (content.getCommand().equals("Aggregation")) {
+                    return "Aggregation";
+                } else if (content.getCommand().equals("TreeCreation")) {
+                    if (origin.getParent() == null) {
+                        return "Sender is new parent";
+                    } else {
+                        return "Already got a parent";
+                    }
+                } else if (content.getCommand().equals("Finding potential Converter")) {
+                    return "Finding potential Converter";
+                } else if (content.getCommand().equals("Checking Candidate Link")) {
+                    return "Error language";
+                } else if (content.getCommand().equals("Place Converter")) {
+                    return "Place Converter";
                 }
             }
-
-        }
-        else if (message.getFlag().equals("IPv6")) {
-            MessageContentIPv6 content = (MessageContentIPv6) message.getContent();
-            if (!origin.getClass().equals(message.getSender().getClass())) {
+            else {
                 return "Error language";
             }
-            else if(content.getCommandIPv6().equals("AggregationIPv6") && origin instanceof RouterIPv6) {
-                return "AggregationIPv6";
-            }
-            else if(content.getCommandIPv6().equals("TreeCreationIPv6") && origin instanceof RouterIPv6) {
-                if (origin.getParent() == null) {
-                    return "Sender is new parent";
-                } else {
-                    return "Already got a parent";
+        } else if (message.getFlag().equals("IPv6")) {
+            Router sender = (Router) message.getSender();
+            if (origin.hasConverter() == true || sender.hasConverter() == true || origin.getClass().equals(sender.getClass())) {
+                if (content.getCommand().equals("Aggregation")) {
+                    return "Aggregation";
+                } else if (content.getCommand().equals("TreeCreation")) {
+                    if (origin.getParent() == null) {
+                        return "Sender is new parent";
+                    } else {
+                        return "Already got a parent";
+                    }
+                } else if (content.getCommand().equals("Finding potential Converter")) {
+                    return "Finding potential Converter";
+                } else if (content.getCommand().equals("Checking Candidate Link")) {
+                    return "Error language";
+                } else if (content.getCommand().equals("Place Converter")) {
+                    return "Place Converter";
                 }
+            }
+            else {
+                return "Error language";
             }
         }
         //:COMMENT:Should not be here
         return null;
+    }
+
+    public void spanningTreeInit(SpanningTreeDistributed algorithm) {
+        parent = this;
+        this.algorithm = algorithm;
+        componentNumber = this.getID();
+        for (Node node : this.getNeighbors()) {
+            Router router = (Router) node;
+            children.add(router);
+            childrenCopy.add(router);
+        }
+        MessageContent content = new MessageContent("TreeCreation");
+        if (this instanceof RouterIPv4) {
+            content.setComponentNumber(componentNumber);
+            for (Router child : children) {
+                send(child, new Message(content, "IPv4"));
+            }
+        } else {
+            content.setComponentNumber(componentNumber);
+            for (Router child : children) {
+                send(child, new Message(content, "IPv6"));
+            }
+        }
+    }
+
+    public void findPotentialConverter() {
+        MessageContent content = new MessageContent("Finding potential Converter");
+       if(parent == this) {
+           checkingCandidateLink();
+       }
+       if(!children.isEmpty()) {
+            for (Node node : this.getNeighbors()) {
+                Router router = (Router) node;
+                if (children.contains(router)) {
+                    if (this instanceof RouterIPv4) {
+                        send(router, new Message(content, "IPv4"));
+                    }
+                    if (this instanceof RouterIPv6) {
+                        send(router, new Message(content, "IPv6"));
+                    }
+                }
+            }
+        }
+        else if(childrenCopy.isEmpty()){
+            if (this instanceof RouterIPv4) {
+                send(parent, new Message(content, "IPv4"));
+            }
+            if (this instanceof RouterIPv6) {
+                send(parent, new Message(content, "IPv6"));
+            }
+        }
+    }
+
+    public void checkingCandidateLink() {
+        MessageContent content = new MessageContent("Checking Candidate Link");
+        for (Node node : this.getNeighbors()) {
+            Router router = (Router) node;
+            if ((router != parent) && (!children.contains(router)) && (router != this) && !(router.getClass().equals(this.getClass()))) {
+                childrenCopy.add(router);
+                if (this instanceof RouterIPv4) {
+                    content.setComponentNumber(componentNumber);
+                    send(router, new Message(content, "IPv4"));
+                }
+                if (this instanceof RouterIPv6) {
+                    content.setComponentNumber(componentNumber);
+                    send(router, new Message(content, "IPv6"));
+                }
+            }
+        }
+    }
+
+    public void placeConverter(Router converter) {
+        if(parent == this && this == converter) {
+            addConverter();
+            algorithm.setupNewResearch();
+            algorithm.newSpanningTree();
+        }
+        else {
+            for (Node node : this.getNeighbors()) {
+                Router router = (Router) node;
+                if (children.contains(router)) {
+                    childrenCopy.add(router);
+                    MessageContent content = new MessageContent("Place Converter");
+                    if (this instanceof RouterIPv4) {
+                        content.setConverterRouter(converter);
+                        send(router, new Message(content, "IPv4"));
+                    }
+                    if (this instanceof RouterIPv6) {
+                        content.setConverterRouter(converter);
+                        send(router, new Message(content, "IPv6"));
+                    }
+                }
+            }
+        }
+    }
+
+    public void aggregation() {
+        if (spanningTreeCreation == true) {
+            if (childrenCopy.isEmpty()) {
+                int numberOfCandidateLink = 0;
+                for (Node node : this.getNeighbors()) {
+                    Router router = (Router) node;
+                    int routerComponentNumber = router.componentNumber;
+                    if (!(router.getClass().equals(this.getClass())) && routerComponentNumber != this.componentNumber)
+                        numberOfCandidateLink++;
+                }
+                finalComponent.put(this, numberOfCandidateLink);
+                if (parent != this) {
+                    MessageContent content = new MessageContent("Aggregation");
+                    if (this instanceof RouterIPv4) {
+                        content.setComponent(finalComponent);
+                        send(parent, new Message(content, "IPv4"));
+                    }
+                    if (this instanceof RouterIPv6) {
+                        content.setComponent(finalComponent);
+                        send(parent, new Message(content, "IPv6"));
+                    }
+                    spanningTreeCreation = false;
+                } else {
+                    if (childrenCopy.isEmpty()) {
+                        spanningTreeCreation = false;
+                        boolean checkEnd = algorithm.newSpanningTree();
+                        if (checkEnd) {
+                            algorithm.findPotentialConverter();
+                        }
+                    }
+                }
+            }
+        }
+        else if(countCandidateLink == true) {
+            if (parent != this) {
+                if(childrenCopy.isEmpty()) {
+                    countCandidateLink = false;
+                    MessageContent content = new MessageContent("Aggregation");
+                    if (this instanceof RouterIPv4) {
+                        finalComponent.put(this, candidateLinkNumber);
+                        content.setComponent(finalComponent);
+                        send(parent, new Message(content, "IPv4"));
+                    }
+                    if (this instanceof RouterIPv6) {
+                        finalComponent.put(this, candidateLinkNumber);
+                        content.setComponent(finalComponent);
+                        send(parent, new Message(content, "IPv6"));
+                    }
+                }
+            }
+            else {
+                if (childrenCopy.isEmpty()) {
+                    countCandidateLink = false;
+                    int maxCandidateLink = 0;
+                    Router converter = null;
+                    for (Router router : finalComponent.keySet()) {
+                        if (finalComponent.get(router) > maxCandidateLink) {
+                            maxCandidateLink = finalComponent.get(router);
+                            converter = router;
+                        }
+                    }
+                    if(converter != null) {
+                        algorithm.placeConverter(converter);
+                    }
+                    else
+                        System.out.println("FINISH");
+                }
+            }
+        }
+        else if(placingConverter == true){
+            if (parent != this) {
+                if(childrenCopy.isEmpty()) {
+                    placingConverter = false;
+                    MessageContent content = new MessageContent("Aggregation");
+                    content.setConverterRouter(needToBeConverter);
+                    if (this instanceof RouterIPv4) {
+                        send(parent, new Message(content, "IPv4"));
+                    }
+                    if (this instanceof RouterIPv6) {
+                        send(parent, new Message(content, "IPv6"));
+                    }
+                }
+            }
+            else {
+                if (childrenCopy.isEmpty()) {
+                    placingConverter = false;
+                    placingConverter = false;
+                    algorithm.setupNewResearch();
+                    algorithm.newSpanningTree();
+                }
+            }
+        }
     }
 }

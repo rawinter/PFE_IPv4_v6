@@ -15,6 +15,7 @@ import java.util.Random;
 public class Main implements SelectionListener, StartListener, CommandListener {
 
     static final String ALGORITHM_DISTRIBUTE = "Distributed Algorithm";
+    static final String ALGORITHM_DISTRIBUTE_DEBUG = "Distributed Algorithm DEBUG";
     static final String ALGORITHM_MACHINE_LEARNING = "Algorithm machine learning";
     static final String ALGORITHM_PROB = "Algorithm prob";
     static final String ALGORITHM_EXACT = "Algorithm exact";
@@ -44,6 +45,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         tp.removeAllCommands();
         tp.addCommand("Save topology");
         tp.addCommand("Load topology");
+        tp.addCommand(ALGORITHM_DISTRIBUTE_DEBUG);
 
         tp.start();
     }
@@ -68,7 +70,8 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
         else{
             if(node instanceof Router){
-                node.setIcon("Code/Ressources/images/Temp-Converter.png");
+                node.setIconSize(20);
+                node.setIcon("Code/Ressources/images/Converter.png");
             }
         }
     }
@@ -89,6 +92,34 @@ public class Main implements SelectionListener, StartListener, CommandListener {
                 router.spanningTreeCreation = true;
             }
             algorithm.newSpanningTree();
+        }
+        if(s.equals(ALGORITHM_DISTRIBUTE_DEBUG)) {
+
+            for(Node node : tp.getNodes()) {
+                Router router = (Router) node;
+                System.out.println("Router " + router.getID() + " with child : ");
+                for(Router child : router.children) {
+                    System.out.print("" + child.getID() + ", ");
+                }
+                System.out.println("");
+                System.out.println("Router " + router.getID() + " with childCopy : ");
+                for(Router child : router.childrenCopy) {
+                    System.out.print("" + child.getID() + ", ");
+                }
+                System.out.println();
+                System.out.println("parent : " + router.parent);
+                System.out.println();
+            }
+            System.out.println();
+            System.out.println("Link :");
+            for(Link link : tp.getLinks()) {
+                System.out.println("" + link + ", ");
+            }
+            System.out.println();
+            System.out.println("Nodes :");
+            for(Node node : tp.getNodes()) {
+                System.out.println("" + node + ", ");
+            }
         }
         if(s.equals(ALGORITHM_MACHINE_LEARNING)){
             //Where to launch the algorithm
