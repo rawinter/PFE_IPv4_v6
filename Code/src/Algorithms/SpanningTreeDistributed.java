@@ -1,6 +1,7 @@
 package Algorithms;
 
 import UI.Router;
+import UI.Window;
 import io.jbotsim.core.Node;
 import io.jbotsim.core.Topology;
 
@@ -11,12 +12,14 @@ import java.util.Random;
 
 public class SpanningTreeDistributed implements AlgorithmModel {
 
+    Window window;
     private Topology tp;
     boolean initCentral = false;
     Router central = null;
 
-    public SpanningTreeDistributed(Topology tp) {
+    public SpanningTreeDistributed(Topology tp, Window window) {
         this.tp = tp;
+        this.window = window;
     }
 
     public void setupNewResearch() {
@@ -95,5 +98,9 @@ public class SpanningTreeDistributed implements AlgorithmModel {
             router.countCandidateLink = false;
         }
         central.placeConverter(converter);
+    }
+
+    public void end() {
+        window.RedoingTheNetwork();
     }
 }

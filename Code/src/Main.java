@@ -15,7 +15,6 @@ import java.util.Random;
 public class Main implements SelectionListener, StartListener, CommandListener {
 
     static final String ALGORITHM_DISTRIBUTE = "Distributed Algorithm";
-    static final String ALGORITHM_DISTRIBUTE_DEBUG = "Distributed Algorithm DEBUG";
     static final String ALGORITHM_MACHINE_LEARNING = "Algorithm machine learning";
     static final String ALGORITHM_PROB = "Algorithm prob";
     static final String ALGORITHM_EXACT = "Algorithm exact";
@@ -33,6 +32,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
     Router start;
     Window win;
     public boolean converter = false;
+    boolean colored = false;
 
     public Main() {
         tp = new Topology();
@@ -45,7 +45,6 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         tp.removeAllCommands();
         tp.addCommand("Save topology");
         tp.addCommand("Load topology");
-        tp.addCommand(ALGORITHM_DISTRIBUTE_DEBUG);
 
         tp.start();
     }
@@ -86,40 +85,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
     @Override
     public void onCommand(String s) {
         if(s.equals(ALGORITHM_DISTRIBUTE)){
-            SpanningTreeDistributed algorithm = new SpanningTreeDistributed(tp);
-            for(Node node : tp.getNodes()) {
-                Router router = (Router) node;
-                router.spanningTreeCreation = true;
-            }
-            algorithm.newSpanningTree();
-        }
-        if(s.equals(ALGORITHM_DISTRIBUTE_DEBUG)) {
 
-            for(Node node : tp.getNodes()) {
-                Router router = (Router) node;
-                System.out.println("Router " + router.getID() + " with child : ");
-                for(Router child : router.children) {
-                    System.out.print("" + child.getID() + ", ");
-                }
-                System.out.println("");
-                System.out.println("Router " + router.getID() + " with childCopy : ");
-                for(Router child : router.childrenCopy) {
-                    System.out.print("" + child.getID() + ", ");
-                }
-                System.out.println();
-                System.out.println("parent : " + router.parent);
-                System.out.println();
-            }
-            System.out.println();
-            System.out.println("Link :");
-            for(Link link : tp.getLinks()) {
-                System.out.println("" + link + ", ");
-            }
-            System.out.println();
-            System.out.println("Nodes :");
-            for(Node node : tp.getNodes()) {
-                System.out.println("" + node + ", ");
-            }
         }
         if(s.equals(ALGORITHM_MACHINE_LEARNING)){
             //Where to launch the algorithm
@@ -161,31 +127,31 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         }
 
         if(s.equals(COVERING_TREE)) {
-            /*Random random = new Random();
-            List<Router> routersList = new ArrayList<>();
-            for(Node node : tp.getNodes())
-                routersList.add((Router) node);
-            List<ConnectedComponent> connectedComponentsList = new ArrayList<>();
-            //while(!routersList.isEmpty())
-            //{
-                int randomNumber = random.nextInt(routersList.size());
-                Router parent = routersList.get(randomNumber);
-                routersList.remove(parent);
-                parent.spanningTree(routersList, connectedComponentsList);
-            //}*/
-            for(Link link : tp.getLinks()) {
-                Router source = (Router) link.source;
-                Router destination = (Router) link.destination;
-                if(source.getClass().equals(destination.getClass()) && source instanceof RouterIPv4) {
-                    source.getCommonLinkWith(destination).setWidth(4);
-                    source.getCommonLinkWith(destination).setColor(Color.RED);
+            if (!colored) {
+                for (Link link : tp.getLinks()) {
+                    Router source = (Router) link.source;
+                    Router destination = (Router) link.destination;
+                    if (source.getClass().equals(destination.getClass()) && source instanceof RouterIPv4) {
+                        source.getCommonLinkWith(destination).setWidth(4);
+                        Color c = new Color(85, 189, 73);
+                        source.getCommonLinkWith(destination).setColor(c);
+                    } else if (source.getClass().equals(destination.getClass()) && source instanceof RouterIPv6) {
+                        source.getCommonLinkWith(destination).setWidth(4);
+                        Color c = new Color(15, 141, 212);
+                        source.getCommonLinkWith(destination).setColor(c);
+                    } else {
+                        source.getCommonLinkWith(destination).setWidth(3);
+                        Color c = new Color(227, 35, 35);
+                        source.getCommonLinkWith(destination).setColor(c);
+                    }
                 }
-                else if(source.getClass().equals(destination.getClass()) && source instanceof RouterIPv6) {
-                    source.getCommonLinkWith(destination).setWidth(4);
-                    source.getCommonLinkWith(destination).setColor(Color.BLUE);
-                }
-                else {
-                    source.getCommonLinkWith(destination).setColor(Color.GREEN);
+                colored = !colored;
+            }
+            else {
+                for (Link link : tp.getLinks()) {
+                    link.setWidth(Link.DEFAULT_WIDTH);
+                    link.setColor(Link.DEFAULT_COLOR);
+                    colored = !colored;
                 }
             }
         }

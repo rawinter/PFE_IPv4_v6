@@ -135,7 +135,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         v4.setIcon(tmpimg);
         Legend.add(v4);
         tmpimg = new ImageIcon("Code/Ressources/images/IPv6.png");
-       image = tmpimg.getImage();
+        image = tmpimg.getImage();
         scaledimg = image.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
         tmpimg = new ImageIcon(scaledimg);
         v6.setIcon(tmpimg);
@@ -196,7 +196,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         window.getContentPane().setBackground(Color.BLACK);
         window.setContentPane(pan);
         window.setExtendedState(Frame.MAXIMIZED_BOTH);
-        jtp.setBackground(Color.white);
+        //jtp.setBackground(Color.white);
         window.add(jtp,BorderLayout.CENTER);
         window.setVisible(true);
 
@@ -261,14 +261,14 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             else {
                 SavingRouter();
 
-                SpanningTreeDistributed algorithm = new SpanningTreeDistributed(tp);
+                SpanningTreeDistributed algorithm = new SpanningTreeDistributed(tp, this);
                 for (Node node : tp.getNodes()) {
                     Router router = (Router) node;
                     router.spanningTreeCreation = true;
                 }
                 algorithm.newSpanningTree();
 
-                RedoingTheNetwork();
+                //RedoingTheNetwork(); //:COMMENT:Used at the end of the algorithm
             }
         }
         if(actionEvent.getSource() == exactAlgorithm || actionEvent.getSource() == exactAlgo) {
@@ -305,7 +305,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         }
     }
 
-    private void RedoingTheNetwork() {
+    public void RedoingTheNetwork() {
         tp.clearLinks();
         for(Node n : routerIPv4){
             if(!tp.getNodes().contains(n)){
@@ -497,6 +497,46 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 }
             }
         }
+    }
+
+    private int numberOfConnectedComponent() {
+        boolean checkEnd = false;
+        int totalConnectedComponent = 0;
+        ArrayList<Router> allRouters = new ArrayList<>();
+        for(Node node : tp.getNodes()) {
+            allRouters.add((Router) node);
+            ((Router) node).spanningTreeCreation = true;
+        }
+        while(!checkEnd) {
+            for(Router router : allRouters) {
+                if(router.spanningTreeCreation) {
+                    findComponent(router);
+                    totalConnectedComponent++;
+                    break;
+                }
+            }
+            checkEnd = true;
+            for(Router router : allRouters) {
+                if(router.spanningTreeCreation) {
+                    checkEnd = false;
+                    break;
+                }
+            }
+        }
+        return totalConnectedComponent;
+    }
+
+    public boolean findComponent(Router router) {
+        if(router.spanningTreeCreation) {
+            router.spanningTreeCreation = false;
+            for(Node node : router.getNeighbors()) {
+                Router neighbor = (Router) node;
+                if(neighbor.getClass().equals(router.getClass()) && neighbor.spanningTreeCreation) {
+                    findComponent(neighbor);
+                }
+            }
+        }
+        return true;
     }
 
 }

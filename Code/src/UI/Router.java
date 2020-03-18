@@ -306,6 +306,7 @@ public class Router extends Node {
                     }
                     else
                         System.out.println("FINISH");
+                        algorithm.end();
                 }
             }
         }
