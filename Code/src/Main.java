@@ -106,18 +106,6 @@ public class Main implements SelectionListener, StartListener, CommandListener {
             tp.setDefaultNodeModel(RouterIPv6.class);
             System.out.println("Adding IPv6 UI.Router");
         }
-        if(s.equals(CONVERTER)){
-            converter = true;
-            System.out.println("Adding Converter");
-            tp.removeCommand(CONVERTER);
-            tp.addCommand(STOP_CONVERTER);
-        }
-        if(s.equals(STOP_CONVERTER)){
-            converter = false;
-            System.out.println("Stop Adding Converter");
-            tp.removeCommand(STOP_CONVERTER);
-            tp.addCommand(CONVERTER);
-        }
         if(s.equals(NETWORK_GENERATION)){
 
         }

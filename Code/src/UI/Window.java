@@ -196,7 +196,6 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         window.getContentPane().setBackground(Color.BLACK);
         window.setContentPane(pan);
         window.setExtendedState(Frame.MAXIMIZED_BOTH);
-        //jtp.setBackground(Color.white);
         window.add(jtp,BorderLayout.CENTER);
         window.setVisible(true);
 
@@ -208,6 +207,8 @@ public class Window extends JViewer implements ActionListener, ItemListener {
     public void actionPerformed(ActionEvent actionEvent) {
         if(actionEvent.getSource() == clear){
             tp.clear();
+            nbConv.setText("");
+            nbComp.setText("");
         }
         if(actionEvent.getSource() == reset){
             for(Node n : tp.getNodes()){
@@ -217,6 +218,8 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                     }
                 }
             }
+            nbConv.setText("Number of converter : 0");
+            nbConv.setHorizontalAlignment(JTextField.CENTER);
         }
         if(actionEvent.getSource() == IPv6){
             tp.setDefaultNodeModel(RouterIPv6.class);
@@ -286,6 +289,8 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         }
         if(actionEvent.getSource() == treeConnexite){
             tp.executeCommand("Find every Connected Component");
+            nbComp.setText("Number of connexe component : " + numberOfConnectedComponent());
+            nbComp.setHorizontalAlignment(JTextField.CENTER);
         }
         if(actionEvent.getSource() == save){
             tp.executeCommand("Save topology");
@@ -330,6 +335,8 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         }
         nbConv.setText("Number of converter : " + c);
         nbConv.setHorizontalAlignment(JTextField.CENTER);
+        nbComp.setText("Number of connexe component : " + numberOfConnectedComponent());
+        nbComp.setHorizontalAlignment(JTextField.CENTER);
     }
 
     private void SavingRouter() {

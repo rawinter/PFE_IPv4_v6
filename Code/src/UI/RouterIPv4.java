@@ -134,7 +134,7 @@ public class RouterIPv4 extends Router {
     @Override
     public void addConverter() {
         super.addConverter();
-        setIconSize(20);
+        setIconSize(25);
         setIcon("Code/Ressources/images/Converter.png");
     }
 
