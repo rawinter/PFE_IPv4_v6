@@ -22,7 +22,7 @@ public class RouterIPv4 extends Router {
         Router sender = (Router) message.getSender();
         MessageContent content = (MessageContent) message.getContent();
         if(result.equals("Aggregation")) {
-            if(spanningTreeCreation == true) {
+            if(spanningTreeCreation) {
                 HashMap<Router, Integer> messageComponent = content.getComponent();
                 for (Router router : messageComponent.keySet()) {
                     if (!finalComponent.containsKey(router)) {
@@ -30,7 +30,7 @@ public class RouterIPv4 extends Router {
                     }
                 }
             }
-            else if(countCandidateLink == true) {
+            else if(countCandidateLink) {
                 if(parent == this) {
                     for(Router router : ((MessageContent) message.getContent()).getComponent().keySet()) {
                         finalComponent.replace(router, ((MessageContent) message.getContent()).getComponent().get(router));
@@ -42,7 +42,7 @@ public class RouterIPv4 extends Router {
                     }
                 }
             }
-            else if(placingConverter == true) {
+            else if(placingConverter) {
                 if(content.getConverterRouter() == this) {
                     addConverter();
                 }

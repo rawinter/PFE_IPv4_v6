@@ -13,10 +13,10 @@ import java.util.Iterator;
 public class NetworkSerializer implements TopologySerializer {
     @Override
     public String exportToString(Topology topology) {
-        StringBuffer res = new StringBuffer();
-        res.append("cR " + topology.getCommunicationRange() + "\n");
-        res.append("sR " + topology.getSensingRange() + "\n");
-        res.append("width " + topology.getWidth() + ":  height " + topology.getHeight() + "\n");
+        StringBuilder res = new StringBuilder();
+        res.append("cR ").append(topology.getCommunicationRange()).append("\n");
+        res.append("sR ").append(topology.getSensingRange()).append("\n");
+        res.append("width ").append(topology.getWidth()).append(":  height ").append(topology.getHeight()).append("\n");
         Iterator var3 = topology.getNodes().iterator();
 
         while(var3.hasNext()){
@@ -24,13 +24,13 @@ public class NetworkSerializer implements TopologySerializer {
             if(n instanceof RouterIPv4){
                 Point p2d = new Point();
                 p2d.setLocation(n.getLocation().getX(), n.getLocation().getY());
-                res.append(n.toString() + " " + p2d.toString().substring(p2d.toString().indexOf("[") - 1) +" IpType 4 " + "\n");
+                res.append(n.toString()).append(" ").append(p2d.toString().substring(p2d.toString().indexOf("[") - 1)).append(" IpType 4 ").append("\n");
             }
             else{
                 if(n instanceof RouterIPv6){
                     Point p2d = new Point();
                     p2d.setLocation(n.getLocation().getX(), n.getLocation().getY());
-                    res.append(n.toString() + " " + p2d.toString().substring(p2d.toString().indexOf("[") - 1) + " IpType 6 " + "\n");
+                    res.append(n.toString()).append(" ").append(p2d.toString().substring(p2d.toString().indexOf("[") - 1)).append(" IpType 6 ").append("\n");
                 }
             }
         }
@@ -41,7 +41,7 @@ public class NetworkSerializer implements TopologySerializer {
         while(var3.hasNext()) {
             Link l = (Link)var3.next();
             if (!l.isWireless()) {
-                res.append(l.toString() + "\n");
+                res.append(l.toString()).append("\n");
             }
         }
 

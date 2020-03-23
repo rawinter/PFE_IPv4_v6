@@ -125,9 +125,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         nbConv.setFont(font);
         nbComp.setEnabled(false);
         nbComp.setFont(font);
-//        Legend.setEnabled(false);
         Legend.setFont(font);
-//        Legend.setText("Green is IPv4, Blue is IPv6 and red is Converter");
         ImageIcon tmpimg = new ImageIcon("Code/Ressources/images/IPv4.png");
         Image image = tmpimg.getImage();
         Image scaledimg = image.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
@@ -379,14 +377,17 @@ public class Window extends JViewer implements ActionListener, ItemListener {
 
         boolean valid = false;
         while(!valid) {
-            int alea1 = random.nextInt(nbIPv4+nbIPv6);
-            int alea2 = random.nextInt(nbIPv4+nbIPv6);
-            while(alea1 == alea2){
-                alea2 = random.nextInt(nbIPv4+nbIPv6);
-            }
-            Link l = new Link(tp.getNodes().get(alea1), tp.getNodes().get((alea2)));
-            if (!tp.getLinks().contains(l)) {
-                tp.addLink(l);
+            for(Node n : tp.getNodes()){
+                for(Node m : tp.getNodes()){
+                    if(n != m){
+                        Link l = new Link(n,m);
+                        if(!tp.getLinks().contains(l)){
+                            if (Math.random() < 0.2){
+                                tp.addLink(l);
+                            }
+                        }
+                    }
+                }
             }
             java.util.List<Node> nodesToTest = new ArrayList<>();
             List<Node> nodesMarked = new ArrayList<>();
@@ -400,6 +401,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 }
             }
         }
+
     }
 
     private void Pretreatment(Topology tp) {

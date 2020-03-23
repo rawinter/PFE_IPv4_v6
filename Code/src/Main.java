@@ -1,16 +1,10 @@
-import Algorithms.ExactAlgorithm;
-import Algorithms.GloutonAlgorithm;
-import Algorithms.SpanningTreeDistributed;
+
 import UI.*;
 import io.jbotsim.core.*;
 import io.jbotsim.core.event.CommandListener;
 import io.jbotsim.core.event.SelectionListener;
 import io.jbotsim.core.event.StartListener;
-import io.jbotsim.ui.JViewer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class Main implements SelectionListener, StartListener, CommandListener {
 
@@ -24,9 +18,6 @@ public class Main implements SelectionListener, StartListener, CommandListener {
     static final String STOP_CONVERTER = "Stop placing Converter";
     static final String NETWORK_GENERATION = "Network generation";
     static final String COVERING_TREE = "Find every Connected Component";
-    static final String NETWORK_GENERATION_10 = "Network generation 10 Router Max";
-    static final String NETWORK_GENERATION_20 = "Network generation 20 Router Max";
-    static final String NETWORK_GENERATION_30 = "Network generation 30 Router Max";
     static final String PRETREATMENT = "Pretreatment of the graph";
     Topology tp;
     Router start;
@@ -84,36 +75,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
 
     @Override
     public void onCommand(String s) {
-        if(s.equals(ALGORITHM_DISTRIBUTE)){
-
-        }
-        if(s.equals(ALGORITHM_MACHINE_LEARNING)){
-            //Where to launch the algorithm
-        }
-        if(s.equals(ALGORITHM_PROB)){
-            //Where to launch the algorithm
-        }
-        if(s.equals(ALGORITHM_EXACT)){
-            //Where to launch the algorithm
-            ExactAlgorithm exact=new ExactAlgorithm(tp);
-            exact.algorithm();
-        }
-        if(s.equals(ADD_IPV4)){
-            tp.setDefaultNodeModel(RouterIPv4.class);
-            System.out.println("Adding IPv4 UI.Router");
-        }
-        if(s.equals(ADD_IPV6)){
-            tp.setDefaultNodeModel(RouterIPv6.class);
-            System.out.println("Adding IPv6 UI.Router");
-        }
-        if(s.equals(NETWORK_GENERATION)){
-
-        }
-
-        if(s.equals(PRETREATMENT)){
-//            Pretreatment();
-        }
-
+//        This command is kept because the code need to be here
         if(s.equals(COVERING_TREE)) {
             if (!colored) {
                 for (Link link : tp.getLinks()) {
@@ -144,8 +106,4 @@ public class Main implements SelectionListener, StartListener, CommandListener {
             }
         }
     }
-
-
-
-
 }

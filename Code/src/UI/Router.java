@@ -99,7 +99,7 @@ public class Router extends Node {
         MessageContent content = (MessageContent) message.getContent();
         if (message.getFlag().equals("IPv4")) {
             Router sender = (Router) message.getSender();
-            if (origin.hasConverter() == true || sender.hasConverter() == true || origin.getClass().equals(sender.getClass())) {
+            if (origin.hasConverter() || sender.hasConverter() || origin.getClass().equals(sender.getClass())) {
                 if (content.getCommand().equals("Aggregation")) {
                     return "Aggregation";
                 } else if (content.getCommand().equals("TreeCreation")) {
@@ -121,7 +121,7 @@ public class Router extends Node {
             }
         } else if (message.getFlag().equals("IPv6")) {
             Router sender = (Router) message.getSender();
-            if (origin.hasConverter() == true || sender.hasConverter() == true || origin.getClass().equals(sender.getClass())) {
+            if (origin.hasConverter() || sender.hasConverter() || origin.getClass().equals(sender.getClass())) {
                 if (content.getCommand().equals("Aggregation")) {
                     return "Aggregation";
                 } else if (content.getCommand().equals("TreeCreation")) {
@@ -241,7 +241,7 @@ public class Router extends Node {
     }
 
     public void aggregation() {
-        if (spanningTreeCreation == true) {
+        if (spanningTreeCreation) {
             if (childrenCopy.isEmpty()) {
                 int numberOfCandidateLink = 0;
                 for (Node node : this.getNeighbors()) {
@@ -273,7 +273,7 @@ public class Router extends Node {
                 }
             }
         }
-        else if(countCandidateLink == true) {
+        else if(countCandidateLink) {
             if (parent != this) {
                 if(childrenCopy.isEmpty()) {
                     countCandidateLink = false;
@@ -310,7 +310,7 @@ public class Router extends Node {
                 }
             }
         }
-        else if(placingConverter == true){
+        else if(placingConverter){
             if (parent != this) {
                 if(childrenCopy.isEmpty()) {
                     placingConverter = false;
@@ -326,7 +326,6 @@ public class Router extends Node {
             }
             else {
                 if (childrenCopy.isEmpty()) {
-                    placingConverter = false;
                     placingConverter = false;
                     algorithm.setupNewResearch();
                     algorithm.newSpanningTree();
