@@ -14,29 +14,12 @@ import java.util.List;
 public abstract class AlgorithmNonDistributed  {
     private static  Topology topology;
     private static ArrayList<ConnectedComponent> components = new ArrayList<>();
-    private ArrayList<Link> candidatesLinks= new ArrayList<>();
-    private List<Node> candidatesNodes = new ArrayList<>();
-    private static int converterToPlace;
-    public int numberConnectedComponents;
 
     public AlgorithmNonDistributed (Topology tp){
         this.topology=tp;
     }
-    public List<Node> NodeCandidates(){
-        List<Node> nodes = new ArrayList<>();
-        for(Link l : topology.getLinks()){
-            Router source = (Router)l.source;
-            Router destination= (Router)l.destination;
-            if(source instanceof RouterIPv4 && destination instanceof RouterIPv6
-                    ||source instanceof RouterIPv6 && destination instanceof RouterIPv4 ){
-                if(!nodes.contains(source))
-                    nodes.add(l.source);
-                if (!nodes.contains(destination))
-                    nodes.add(l.destination);
-            }
-        }
-        return nodes;
-    }
+
+
 
     public Topology getTopology(){ return topology; }
 
@@ -44,15 +27,8 @@ public abstract class AlgorithmNonDistributed  {
 
     public static void setConnectedComponents(ArrayList<ConnectedComponent> l){ components= l; }
 
-    public List<Node> getCandidatesNodes(){ return candidatesNodes; }
-
-    public static void resetConnectedComponents(Topology tp){
-        for(Node n: tp.getNodes()){
-            Router r = (Router)n;
-            r.setComponent(null);
-        }
-    }
-    public static ArrayList<ConnectedComponent> getConnectedComponents(Topology tp){
+    //COMMENT :  return a list of the connected components of the topology
+    public  ArrayList<ConnectedComponent> getConnectedComponents(Topology tp){
         ArrayList<ConnectedComponent> components = new ArrayList<>();
         List<Node> nodes = tp.getNodes();
         while(!nodes.isEmpty()){
@@ -70,7 +46,9 @@ public abstract class AlgorithmNonDistributed  {
         return components;
     }
 
-    public static ArrayList<Router> recursiveSameClassNeighbor(ArrayList<Router> connected, Router previous, List<Node> nodes) {
+    // COMMENT : recursive function that check if neighbor is same type of router and add
+    // into the current component
+    public  ArrayList<Router> recursiveSameClassNeighbor(ArrayList<Router> connected, Router previous, List<Node> nodes) {
         List<Node> neighbors = previous.getNeighbors();
         for(Router router : connected) {
             if(neighbors.contains(router)) {
@@ -91,59 +69,15 @@ public abstract class AlgorithmNonDistributed  {
         return connected;
     }
 
-    public void defineConverterToPlace(){ converterToPlace=getConnectedComponents(topology).size(); }
-
-    public int getNbConverterToplace(){ return converterToPlace; }
-
-    public void countCandidatesLink(Topology tp) {
-        for (Node n : tp.getNodes()) {
-            int cpt=0;
-            Router r=(Router)n;
-            for (Link l : candidatesLinks) {
-                if (l.source.equals(n) || l.destination.equals(n)) {
-                    cpt++;
-                }
-            }
-            r.setCandidateLinkNumberCandidate(cpt);
-        }
-    }
-    //:COMMENT : Remove candidates links of a router r
-    public void removeLinkCandidates(Topology tp,Router r){
-        candidatesLinks.clear();
-        countCandidatesLink(tp);
-    }
-    public void candidatLink(Topology tp) {
-        for (Link l : tp.getLinks()) {
-            Router source = (Router) l.source;
-            Router destination = (Router) l.destination;
-            boolean containInComponent = false;
-            if (!(source.getClass().equals(destination.getClass()) ||
-                    source.hasConverter() || destination.hasConverter())) {
-                for(ConnectedComponent cc : getComponent()){
-                    if(cc.contains(source) && cc.contains(destination))
-                    {
-                        containInComponent = true;
-                    }
-                }
-                if(!containInComponent)
-                    candidatesLinks.add(l);
-            }
-        }
-        if (this instanceof GloutonAlgorithm) {
-            countCandidatesLink(tp);
-        }
-    }
 
 
-    public void placeConverterOnRouter(Topology tp,Router r){
-        r.addConverter();
-        r.resetCandidateLinkNumber();
-        removeLinkCandidates(tp,r);
-        resetConnectedComponents(tp);
-        setConnectedComponents(getConnectedComponents(tp));
 
-        candidatLink(tp);
-    }
+
+
+
+
+
+
 
 
 

@@ -116,20 +116,4 @@ class MainTest {
         assertEquals(main.tp.getNodes().get(0).getIcon(),"Code/Ressources/images/Temp-Converter.png");
     }
 
-    @Test
-    void ExactAlgorithm(){
-        Main main = new Main();
-        main.onCommand(Main.NETWORK_GENERATION);
-        Topology tp=main.tp;
-        ExactAlgorithm exact = new ExactAlgorithm(tp);
-        main.onCommand(Main.ALGORITHM_EXACT);
-        //exact.algorithm();
-        assertTrue(exact.algorithm());
-
-
-
-    }
-
-
-
 }

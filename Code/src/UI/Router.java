@@ -9,9 +9,9 @@ import java.util.HashMap;
 
 public class Router extends Node {
     public boolean Converter = false;
-    public ConnectedComponent component = null;
+
+    // : COMMENT : Need to Glouton Algorithm
     public int candidateLinkNumber = 0;
-    public boolean marked = false;
 
     //:COMMENT:Needed for the spanning Tree method (Distributed)
     public Router parent = null;
@@ -66,10 +66,8 @@ public class Router extends Node {
         return candidateLinkNumber;
     }
 
-    public ConnectedComponent getComponent() {
-        return component;
-    }
-
+    // Set for the current router his candidate link to 0
+    // and decrement for each candidat router in his neighbor list
     public void resetCandidateLinkNumber() {
         candidateLinkNumber = 0;
         for (Node n : this.getNeighbors()) {
@@ -79,12 +77,9 @@ public class Router extends Node {
         }
     }
 
+    // COMMENT : Decrement the variable needed in GloutonAlgorithm
     public void decrementCandidateLinkNumber() {
         candidateLinkNumber--;
-    }
-
-    public void setComponent(ConnectedComponent cc) {
-        component = cc;
     }
 
     public void setConverter() {

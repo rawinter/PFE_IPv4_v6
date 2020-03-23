@@ -6,14 +6,10 @@ public class ConnectedComponent {
     private ArrayList<Router> routers = new ArrayList<>();
 
 
-    public void addRouter(Router r){ routers.add(r);r.setComponent(this); }
+    public void addRouter(Router r){ routers.add(r); }
 
     public boolean contains(Router r){
         return routers.contains(r);
-    }
-
-    public ArrayList<Router> getRouters(){
-        return routers;
     }
 
     public String toString(){
