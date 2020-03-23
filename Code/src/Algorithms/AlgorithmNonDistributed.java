@@ -91,7 +91,7 @@ public abstract class AlgorithmNonDistributed  {
         return connected;
     }
 
-    public void defineConverterToPlace(){ converterToPlace=getConnectedComponents(topology).size()-1; }
+    public void defineConverterToPlace(){ converterToPlace=getConnectedComponents(topology).size(); }
 
     public int getNbConverterToplace(){ return converterToPlace; }
 
