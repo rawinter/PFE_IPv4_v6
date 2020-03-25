@@ -230,6 +230,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 nbIPv4 = Integer.parseInt(JOptionPane.showInputDialog(null, "number of ipv4 router", "Network generation", JOptionPane.QUESTION_MESSAGE));
             } catch (NumberFormatException e) {
                 System.out.println("No number specified default at 10");
+                JOptionPane.showMessageDialog(null,"No number specified default at 10","Error",JOptionPane.ERROR_MESSAGE);
             } catch (HeadlessException e) {
                 System.out.println("Headless");
             }
@@ -237,6 +238,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 nbIPv6 = Integer.parseInt(JOptionPane.showInputDialog(null, "number of ipv6 router", "Network generation", JOptionPane.QUESTION_MESSAGE));
             } catch (NumberFormatException e) {
                 System.out.println("No number specified default at 10");
+                JOptionPane.showMessageDialog(null,"No number specified default at 10","Error",JOptionPane.ERROR_MESSAGE);
             } catch (HeadlessException e) {
                 System.out.println("Headless");
             }
@@ -485,7 +487,12 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         boolean valid = true;
         List<Node> nodesToTest = new ArrayList<>();
         List<Node> nodesMarked = new ArrayList<>();
-        nodesToTest.add(tp.getNodes().get(0));
+        try {
+            nodesToTest.add(tp.getNodes().get(0));
+        } catch (Exception e) {
+            System.out.println("there is no graph please generate or create one");
+             JOptionPane.showMessageDialog(null,"there is no graph please generate or create one","Error",JOptionPane.ERROR_MESSAGE);
+        }
         markNodes(nodesToTest, nodesMarked);
         for (Node n : tp.getNodes()) {
             if (!nodesMarked.contains(n)) {
