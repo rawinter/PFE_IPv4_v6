@@ -1,4 +1,5 @@
 
+import Algorithms.MessageCommunicationDisplay;
 import UI.*;
 import io.jbotsim.core.*;
 import io.jbotsim.core.event.CommandListener;
@@ -40,9 +41,16 @@ public class Main implements SelectionListener, StartListener, CommandListener {
         tp.start();
     }
 
+    private MessageCommunicationDisplay algorithmDisplay = new MessageCommunicationDisplay();
+
+
+
     @Override
     public void onSelection(Node node) {
-        if(!converter) {
+        Router router = (Router) node;
+        algorithmDisplay.setTopology(tp);
+        algorithmDisplay.messageDisplay(router);
+        /*if(!converter) {
             boolean removedLink = false;
             if (start != null) {
                 Link l = new Link(start, node);
@@ -63,7 +71,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
                 node.setIconSize(20);
                 node.setIcon("Code/Ressources/images/Converter.png");
             }
-        }
+        }*/
     }
 
     public static void main(String[] args) { new Main(); }
@@ -101,8 +109,8 @@ public class Main implements SelectionListener, StartListener, CommandListener {
                 for (Link link : tp.getLinks()) {
                     link.setWidth(Link.DEFAULT_WIDTH);
                     link.setColor(Link.DEFAULT_COLOR);
-                    colored = !colored;
                 }
+                colored = !colored;
             }
         }
     }

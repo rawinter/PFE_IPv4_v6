@@ -1,5 +1,6 @@
 package UI;
 
+import Algorithms.MessageCommunicationDisplay;
 import Algorithms.SpanningTreeDistributed;
 import DataStructure.MessageContent;
 import io.jbotsim.core.*;
@@ -15,6 +16,10 @@ public class Router extends Node {
 
     //:COMMENT:Needed for the spanning Tree method (Distributed)
     public Router parent = null;
+    //
+
+    //:COMMENT:Needed for the message display (A PLACER DANS LE MAIN)
+    public Router parentMessageDisplay = null;
     //
 
     //:COMMENT:Needed for the aggregation of the component (Distributed)
@@ -299,9 +304,10 @@ public class Router extends Node {
                     if(converter != null) {
                         algorithm.placeConverter(converter);
                     }
-                    else
+                    else {
                         System.out.println("FINISH");
-                        algorithm.end();
+                        algorithm.endAlgo();
+                    }
                 }
             }
         }

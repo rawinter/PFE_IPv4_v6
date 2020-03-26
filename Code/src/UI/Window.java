@@ -209,6 +209,8 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             nbComp.setText("");
         }
         if(actionEvent.getSource() == reset){
+            SpanningTreeDistributed algorithm = new SpanningTreeDistributed(tp, this);
+            algorithm.setupNewResearch();
             for(Node n : tp.getNodes()){
                 if(n instanceof Router){
                     if(((Router) n).hasConverter()){
@@ -539,6 +541,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 }
             }
         }
+        System.out.println(totalConnectedComponent);
         return totalConnectedComponent;
     }
 
@@ -547,7 +550,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             router.spanningTreeCreation = false;
             for(Node node : router.getNeighbors()) {
                 Router neighbor = (Router) node;
-                if(neighbor.getClass().equals(router.getClass()) && neighbor.spanningTreeCreation) {
+                if((neighbor.getClass().equals(router.getClass()) || neighbor.hasConverter() || router.hasConverter()) && neighbor.spanningTreeCreation) {
                     findComponent(neighbor);
                 }
             }

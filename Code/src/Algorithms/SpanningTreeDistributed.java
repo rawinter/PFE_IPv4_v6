@@ -100,7 +100,7 @@ public class SpanningTreeDistributed implements AlgorithmModel {
         central.placeConverter(converter);
     }
 
-    public void end() {
+    public void endAlgo() {
         window.RedoingTheNetwork();
     }
 }
