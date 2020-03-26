@@ -18,52 +18,53 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
     public ExactAlgorithm(Topology tp) { super(tp);}
 
        static void CombinationRepetitionUtil(ArrayList<Integer> chosen, ArrayList<Integer> arr,
-                                          int index, int r, int start, int end,Topology tp) {
-        // Since index has become r, current combination is
-        // ready to be test if it is a good solution
-            // we add it to the solution variable
-        if (solution.isEmpty()) {
-            if (index == r) {
-                ArrayList<Integer> id = new ArrayList<>();
-                for (int i = 0; i < r; i++) {
-                    id.add(arr.get(chosen.get(i)));
-                }
-                boolean redondance = false;
-                //We check if the list contains two times the same id_nodes
-                for (int i = 0; i < id.size(); i++) {
-                    if (id.size() > 1 && i < id.size() - 1) {
-                        if (id.get(i) == id.get(i + 1)) {
-                            redondance = true;
-                        }
-                    }
-                }
-                //if the list is correctly set and don't have redondance of an ID into it
-                // we can check if it's a solution
-                solution=id;
-                if (!redondance) {
-                    setConverter(solution,tp);
-                    setConnectedComponents(getConnectedComponents(tp));
-                    //If == 1 means that we have the good solution
-                    if (getConnectedComponents(tp).size() == 1) {
+                                            int index, int r, int start, int end,Topology tp) {
+           // Since index has become r, current combination is
+           // ready to be test if it is a good solution
+           // we add it to the solution variable
+           if (solution.isEmpty()) {
+               if (index == r) {
+                   ArrayList<Integer> id = new ArrayList<>();
+                   for (int i = 0; i < r; i++) {
+                       id.add(arr.get(chosen.get(i)));
+                   }
+                   boolean redondance = false;
+                   //We check if the list contains two times the same id_nodes
+                   for (int i = 0; i < id.size(); i++) {
+                       if (id.size() > 1 && i < id.size() - 1) {
+                           if (id.get(i) == id.get(i + 1)) {
+                               redondance = true;
+                           }
+                       }
+                   }
+                   //if the list is correctly set and don't have redondance of an ID into it
+                   // we can check if it's a solution
+                   if (!redondance) {
+                       setConverter(id,tp);
+                       setConnectedComponents(getConnectedComponents(tp));
+                       //If == 1 means that we have the good solution
+                       if (getConnectedComponents(tp).size() == 1) {
+                           solution = id;
+                       }
+                       else{
+                           reinitialiseConverter(candidatsNodes);
+                       }
 
-                    } else {
-                        reinitialiseConverter(candidatsNodes);
-                        //solution.clear();
-                    }
+                   }
+                   return;
+               }
+               if (solution.isEmpty()) {
 
-                }
-                return;
-            }
-
-            // permutation of one element one by one, and recursive call
-            for (int i = start; i <= end; i++) {
-                chosen.set(index, i);
-                CombinationRepetitionUtil(chosen, arr, index + 1,
-                        r, i, end,tp);
-            }
-            return;
-        }
-    }
+                   // permutation of one element one by one, and recursive call
+                   for (int i = start; i <= end; i++) {
+                       chosen.set(index, i);
+                       CombinationRepetitionUtil(chosen, arr, index + 1,
+                               r, i, end, tp);
+                   }
+                   return;
+               }
+           }
+       }
     // Determine and add the Node that possess a candidat Link
     public List<Node> NodeCandidates(Topology topology){
         List<Node> nodes = new ArrayList<>();
@@ -114,17 +115,18 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
             Router r = (Router) n;
             placeConverterOnRouterExact(tp, r);
         }*/
-        while(!list.isEmpty()){
-            for (Node n : tp.getNodes()){
-                if (n.getID()==list.get(0)){
-                    Router r = (Router) n;
-                    placeConverterOnRouterExact(tp, r);
 
-                }
-            }
-            list.remove(list.get(0));
-        }
-    }
+           while (!list.isEmpty()) {
+               for (Node n : tp.getNodes()) {
+                   if (n.getID() == list.get(0)) {
+                       Router r = (Router) n;
+                       placeConverterOnRouterExact(tp, r);
+
+                   }
+               }
+               list.remove(list.get(0));
+           }
+       }
 
     //COMMENT : Place a converter on the router r
     // if instanceof Glouton we do other treatment.
