@@ -42,6 +42,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
     private JMenuItem load = new JMenuItem("Load network");
     private JMenuItem reset = new JMenuItem("Reset the topology");
     private JMenuItem clear = new JMenuItem("clear");
+    private JMenuItem path = new JMenuItem("Testing the path");
 
     private JMenuItem treeConnexite = new JMenuItem("Make the connexe component appear");
 
@@ -60,6 +61,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
     double y = window.getHeight();
     int nbIPv4 = 10,nbIPv6 = 10;
     boolean saved = false;
+    boolean pathing = false;
     Font font = new Font("Garamond", Font.BOLD, 15);
 
 
@@ -74,6 +76,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 for(Node n : tp.getNodes()){
                     n.setLocation((propX*n.getLocation().getX()),(propY*n.getLocation().getY()));
                 }
+
                 x = window.getWidth();
                 y = window.getHeight();
             }
@@ -107,6 +110,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         algorithm.add(pretreatment);
         algorithm.add(clear);
         algorithm.add(reset);
+        algorithm.add(path);
         algorithm.addSeparator();
         algorithm.add(gloutonAlgorithm);
         algorithm.add(distributedAlgorithm);
@@ -157,6 +161,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         networkGeneration.addActionListener(this);
         IPv4.addActionListener(this);
         IPv6.addActionListener(this);
+        path.addActionListener(this);
         treeConnexite.addActionListener(this);
         pretreatment.addActionListener(this);
         gloutonAlgorithm.addActionListener(this);
@@ -173,6 +178,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         networkGeneration.setFont(font);
         IPv4.setFont(font);
         IPv6.setFont(font);
+        path.setFont(font);
         treeConnexite.setFont(font);
         pretreatment.setFont(font);
         gloutonAlgorithm.setFont(font);
@@ -201,8 +207,12 @@ public class Window extends JViewer implements ActionListener, ItemListener {
 
     }
 
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
+        if(actionEvent.getSource() == path){
+            pathing = true;
+        }
         if(actionEvent.getSource() == clear){
             tp.clear();
             nbConv.setText("");
@@ -215,11 +225,11 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 if(n instanceof Router){
                     if(((Router) n).hasConverter()){
                         ((Router) n).setConverter();
+                        n.setIconSize(Node.DEFAULT_ICON_SIZE);
                     }
                 }
             }
-            nbConv.setText("Number of converter : 0");
-            nbConv.setHorizontalAlignment(JTextField.CENTER);
+            textupdate();
         }
         if(actionEvent.getSource() == IPv6){
             tp.setDefaultNodeModel(RouterIPv6.class);
@@ -249,6 +259,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         if(actionEvent.getSource() == gloutonAlgorithm || actionEvent.getSource() == gloutonAlgo) {
             if(!connexity(tp)){
                 System.out.println("the graph is not connexe can't continue");
+                JOptionPane.showMessageDialog(null,"the graph is not connexe can't continue","Error",JOptionPane.ERROR_MESSAGE);
             }
             else {
                 SavingRouter();
@@ -262,6 +273,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         if(actionEvent.getSource() == distributedAlgorithm || actionEvent.getSource() == distributedAlgo) {
             if(!connexity(tp)){
                 System.out.println("the graph is not connexe can't continue");
+                JOptionPane.showMessageDialog(null,"the graph is not connexe can't continue","Error",JOptionPane.ERROR_MESSAGE);
             }
             else {
                 SavingRouter();
@@ -279,6 +291,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         if(actionEvent.getSource() == exactAlgorithm || actionEvent.getSource() == exactAlgo) {
             if(!connexity(tp)){
                 System.out.println("the graph is not connexe can't continue");
+                JOptionPane.showMessageDialog(null,"the graph is not connexe can't continue","Error",JOptionPane.ERROR_MESSAGE);
             }
             else {
                SavingRouter();
@@ -291,14 +304,14 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         }
         if(actionEvent.getSource() == treeConnexite){
             tp.executeCommand("Find every Connected Component");
-            nbComp.setText("Number of connexe component : " + numberOfConnectedComponent());
-            nbComp.setHorizontalAlignment(JTextField.CENTER);
+            textupdate();
         }
         if(actionEvent.getSource() == save){
             tp.executeCommand("Save topology");
         }
         if(actionEvent.getSource() == load){
             tp.executeCommand("Load topology");
+            textupdate();
         }
         if(actionEvent.getSource() == pretreatment){
             if(!saved) {
@@ -327,18 +340,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         for(Link l : links){
             tp.addLink(l);
         }
-        int c = 0;
-        for(Node n : tp.getNodes()){
-            if(n instanceof Router){
-                if(((Router) n).hasConverter()){
-                    c++;
-                }
-            }
-        }
-        nbConv.setText("Number of converter : " + c);
-        nbConv.setHorizontalAlignment(JTextField.CENTER);
-        nbComp.setText("Number of connexe component : " + numberOfConnectedComponent());
-        nbComp.setHorizontalAlignment(JTextField.CENTER);
+        textupdate();
     }
 
     private void SavingRouter() {
@@ -541,7 +543,6 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 }
             }
         }
-        System.out.println(totalConnectedComponent);
         return totalConnectedComponent;
     }
 
@@ -558,4 +559,22 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         return true;
     }
 
+    public boolean getPathing(){
+        return pathing;
+    }
+
+    public void  textupdate(){
+        int c = 0;
+        for(Node n : tp.getNodes()){
+            if(n instanceof Router){
+                if(((Router) n).hasConverter()){
+                    c++;
+                }
+            }
+        }
+        nbConv.setText("Number of converter : " + c);
+        nbConv.setHorizontalAlignment(JTextField.CENTER);
+        nbComp.setText("Number of connexe component : " + numberOfConnectedComponent());
+        nbComp.setHorizontalAlignment(JTextField.CENTER);
+    }
 }

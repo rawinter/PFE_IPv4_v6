@@ -7,6 +7,7 @@ import io.jbotsim.core.Link;
 import io.jbotsim.core.Node;
 import io.jbotsim.core.Topology;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -43,7 +44,8 @@ public class MessageCommunicationDisplay {
                 displayPath(base.parentMessageDisplay, base);
             }
             else {
-                System.out.println("Pas de chemin existant");
+                System.out.println("there is no path between this routers");
+                JOptionPane.showMessageDialog(null,"there is no path between this routers","Error",JOptionPane.ERROR_MESSAGE);
             }
             componentSender.clear();
             sender = null;

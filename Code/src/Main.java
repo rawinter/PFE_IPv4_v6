@@ -47,10 +47,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
 
     @Override
     public void onSelection(Node node) {
-        Router router = (Router) node;
-        algorithmDisplay.setTopology(tp);
-        algorithmDisplay.messageDisplay(router);
-        /*if(!converter) {
+        if (!win.getPathing()) {
             boolean removedLink = false;
             if (start != null) {
                 Link l = new Link(start, node);
@@ -58,20 +55,22 @@ public class Main implements SelectionListener, StartListener, CommandListener {
                     if (link.equals(l)) {
                         tp.removeLink(l);
                         removedLink = true;
+                        win.textupdate();
                     }
                 }
                 if (!removedLink)
                     tp.addLink(l);
+                win.textupdate();
+
                 start = null;
             } else
                 start = (Router) node;
         }
         else{
-            if(node instanceof Router){
-                node.setIconSize(20);
-                node.setIcon("Code/Ressources/images/Converter.png");
-            }
-        }*/
+            Router router = (Router) node;
+            algorithmDisplay.setTopology(tp);
+            algorithmDisplay.messageDisplay(router);
+        }
     }
 
     public static void main(String[] args) { new Main(); }
