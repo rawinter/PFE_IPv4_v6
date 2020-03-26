@@ -279,12 +279,12 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 System.out.println("the graph is not connexe can't continue");
             }
             else {
-//                SavingRouter();
+               SavingRouter();
 
             ExactAlgorithm exact = new ExactAlgorithm(tp);
             exact.algorithm();
 
-//                RedoingTheNetwork();
+                RedoingTheNetwork();
             }
         }
         if(actionEvent.getSource() == treeConnexite){
@@ -352,7 +352,6 @@ public class Window extends JViewer implements ActionListener, ItemListener {
             }
         }
         links.addAll(tp.getLinks());
-
         Pretreatment(tp);
     }
 
@@ -465,6 +464,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
                 }
             }
         }
+
     }
 
     @Override

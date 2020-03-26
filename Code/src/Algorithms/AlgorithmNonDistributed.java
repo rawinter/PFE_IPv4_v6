@@ -19,16 +19,14 @@ public abstract class AlgorithmNonDistributed  {
         this.topology=tp;
     }
 
-
-
-    public Topology getTopology(){ return topology; }
+    public static Topology getTopology(){ return topology; }
 
     public static ArrayList<ConnectedComponent> getComponent(){ return components;}
 
     public static void setConnectedComponents(ArrayList<ConnectedComponent> l){ components= l; }
 
     //COMMENT :  return a list of the connected components of the topology
-    public  ArrayList<ConnectedComponent> getConnectedComponents(Topology tp){
+    public static ArrayList<ConnectedComponent> getConnectedComponents(Topology tp){
         ArrayList<ConnectedComponent> components = new ArrayList<>();
         List<Node> nodes = tp.getNodes();
         while(!nodes.isEmpty()){
@@ -48,7 +46,7 @@ public abstract class AlgorithmNonDistributed  {
 
     // COMMENT : recursive function that check if neighbor is same type of router and add
     // into the current component
-    public  ArrayList<Router> recursiveSameClassNeighbor(ArrayList<Router> connected, Router previous, List<Node> nodes) {
+    public static ArrayList<Router> recursiveSameClassNeighbor(ArrayList<Router> connected, Router previous, List<Node> nodes) {
         List<Node> neighbors = previous.getNeighbors();
         for(Router router : connected) {
             if(neighbors.contains(router)) {

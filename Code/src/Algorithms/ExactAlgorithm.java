@@ -13,11 +13,11 @@ import java.util.*;
 public class ExactAlgorithm extends AlgorithmNonDistributed {
     public static ArrayList<Integer> candidatsNodes = new ArrayList<Integer>();
     public static int converterToPlace;
-    ArrayList<Integer> solution=new ArrayList<>();
+   static ArrayList<Integer> solution=new ArrayList<>();
 
     public ExactAlgorithm(Topology tp) { super(tp);}
 
-        void CombinationRepetitionUtil(ArrayList<Integer> chosen, ArrayList<Integer> arr,
+       static void CombinationRepetitionUtil(ArrayList<Integer> chosen, ArrayList<Integer> arr,
                                           int index, int r, int start, int end,Topology tp) {
         // Since index has become r, current combination is
         // ready to be test if it is a good solution
@@ -39,14 +39,16 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
                 }
                 //if the list is correctly set and don't have redondance of an ID into it
                 // we can check if it's a solution
+                solution=id;
                 if (!redondance) {
-                    setConverter(id,tp);
+                    setConverter(solution,tp);
                     setConnectedComponents(getConnectedComponents(tp));
                     //If == 1 means that we have the good solution
                     if (getConnectedComponents(tp).size() == 1) {
-                        solution = id;
+
                     } else {
                         reinitialiseConverter(candidatsNodes);
+                        //solution.clear();
                     }
 
                 }
@@ -80,7 +82,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
     }
 
     // calcul all the combination of the Arraylist int
-    void CombinationRepetition(ArrayList <Integer> list, int n, int r,Topology tp) {
+  static  void CombinationRepetition(ArrayList <Integer> list, int n, int r,Topology tp) {
         ArrayList<Integer> chosen = new ArrayList<>();
         for(int i=0;i<list.size();i++){
             chosen.add(0);
@@ -94,7 +96,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
     public int getNbConverterToplace(){ return converterToPlace; }
 
     //Set the variable converter to false for all nodes
-    public  void reinitialiseConverter(List<Integer> candidatsNodes){
+    public static void reinitialiseConverter(List<Integer> candidatsNodes){
         for(int i=0;i<candidatsNodes.size();i++){
             for(Node n : getTopology().getNodes()){
                 if (n.getID()==candidatsNodes.get(i)){
@@ -106,17 +108,27 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
     }
 
     //Set a converter on each router of the list
-    public  void setConverter(List<Integer> list, Topology tp){
-        for(int i=0;i<list.size();i++){
+    public static void setConverter(List<Integer> list, Topology tp){
+       /* for(int i=0;i<list.size();i++){
             Node n = tp.getNodes().get(list.get(i));
             Router r = (Router) n;
             placeConverterOnRouterExact(tp, r);
+        }*/
+        while(!list.isEmpty()){
+            for (Node n : tp.getNodes()){
+                if (n.getID()==list.get(0)){
+                    Router r = (Router) n;
+                    placeConverterOnRouterExact(tp, r);
+
+                }
+            }
+            list.remove(list.get(0));
         }
     }
 
     //COMMENT : Place a converter on the router r
     // if instanceof Glouton we do other treatment.
-    public void placeConverterOnRouterExact(Topology tp,Router r){
+    public static void placeConverterOnRouterExact(Topology tp,Router r){
         r.addConverter();
         setConnectedComponents(getConnectedComponents(tp));
 
@@ -130,6 +142,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
         ArrayList<ConnectedComponent> connectedComponents=getConnectedComponents(tp);
         setConnectedComponents(connectedComponents);
         defineConverterToPlace(tp);
+
         int k=1;
         while(k<getNbConverterToplace() && solution.isEmpty()){
             CombinationRepetition(candidatsNodes, candidatsNodes.size(), k,tp);
