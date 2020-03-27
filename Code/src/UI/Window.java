@@ -343,7 +343,7 @@ public class Window extends JViewer implements ActionListener, ItemListener {
         textupdate();
     }
 
-    private void SavingRouter() {
+    public void SavingRouter() {
         routerIPv4.clear();
         routerIPv6.clear();
         links.clear();
