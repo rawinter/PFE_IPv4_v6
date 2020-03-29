@@ -11,7 +11,7 @@ import java.util.HashMap;
 public class Router extends Node {
     public boolean Converter = false;
 
-    // : COMMENT : Need to Glouton Algorithm
+    //:COMMENT:Need to Glouton Algorithm
     public int candidateLinkNumber = 0;
 
     //:COMMENT:Needed for the spanning Tree method (Distributed)
@@ -71,7 +71,7 @@ public class Router extends Node {
         return candidateLinkNumber;
     }
 
-    // Set for the current router his candidate link to 0
+    //:COMMENT:Set for the current router his candidate link to 0
     // and decrement for each candidat router in his neighbor list
     public void resetCandidateLinkNumber() {
         candidateLinkNumber = 0;
@@ -82,7 +82,7 @@ public class Router extends Node {
         }
     }
 
-    // COMMENT : Decrement the variable needed in GloutonAlgorithm
+    //COMMENT:Decrement the variable needed in GloutonAlgorithm
     public void decrementCandidateLinkNumber() {
         candidateLinkNumber--;
     }
@@ -142,7 +142,7 @@ public class Router extends Node {
                 return "Error language";
             }
         }
-        //:COMMENT:Should not be here
+        //:COMMENT:Should not be here, only used to DEBUG if needed
         return null;
     }
 

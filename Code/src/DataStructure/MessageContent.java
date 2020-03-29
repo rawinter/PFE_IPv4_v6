@@ -8,7 +8,6 @@ public class MessageContent {
 
     int componentNumber;
     Router converter;
-    boolean placeConverter = false;
     String command;
     HashMap<Router, Integer> component;
 
@@ -43,8 +42,4 @@ public class MessageContent {
     public Router getConverterRouter() {
         return converter;
     }
-
-    public void setPlaceConverter(boolean placeConverter) { this.placeConverter = placeConverter;}
-
-    public boolean getPlaceConverter() { return placeConverter;}
 }

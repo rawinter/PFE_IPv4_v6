@@ -32,7 +32,7 @@ class MainTest {
 
     }
 
-//    Testing the adding of a router on the topology
+    //:COMMENT:Testing the adding of a router on the topology
     @Test
     void onCommandAddRouter() {
         Main main = new Main();
@@ -41,7 +41,7 @@ class MainTest {
 
     }
 
-//      Non-regression test created to assure that the Network generation do not add same links multiple time
+    //:COMMENT:Non-regression test created to assure that the Network generation do not add same links multiple time
     @Test
     void networkGenerationLinkDuplication(){
         Main main = new Main();
@@ -53,7 +53,7 @@ class MainTest {
         }
     }
 
-//    Testing of the network generation
+    //:COMMENT:Testing of the network generation
 //    @Test
 //    void networkGeneration(){
 //        Main main = new Main();
@@ -63,7 +63,7 @@ class MainTest {
 //    }
 //
 //
-////    Testing for the connexite of a generated network
+    //:COMMENT:Testing for the connexite of a generated network
 //    @Test
 //    void Connexite(){
 //        Main main = new Main();
@@ -90,7 +90,7 @@ class MainTest {
 //        assertTrue(valid);
 //    }
 
-//    Testing of the command to place converter
+    //:COMMENT:Testing of the command to place converter
     @Test
     void CommandsAddingConverter(){
         Main main = new Main();
@@ -102,7 +102,7 @@ class MainTest {
 
 
 
-//    Testing that the router have the correct icons
+    //:COMMENT:Testing that the router have the correct icons
     @Test
     void RouterIcons(){
         Main main = new Main();

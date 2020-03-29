@@ -127,7 +127,7 @@ public class RouterIPv4 extends Router {
             }
         }
         else if(result.equals(null)) {
-            //:COMMENT:Should not be here, only used to debug
+            //:COMMENT:Should not be here, only used to DEBUG if needed
         }
     }
 

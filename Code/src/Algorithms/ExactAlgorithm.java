@@ -22,7 +22,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
 
     static void CombinationRepetitionUtil(ArrayList<Integer> chosen, ArrayList<Integer> arr,
                                    int index, int r, int start, int end,Topology tp) {
-        // Since index has become r, current combination is
+        //:COMMENT:Since index has become r, current combination is
         // ready to be test if it is a good solution
         // we add it to the solution variable
         if (solution.isEmpty() && !found) {
@@ -40,7 +40,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
                         }
                     }
                 }
-                //if the list is correctly set and don't have redondance of an ID into it
+                //:COMMENT:if the list is correctly set and don't have redondance of an ID into it
                 // we can check if it's a solution
                 if (!redondance) {
                     setConverter(id,tp);
@@ -60,7 +60,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
             }
 
 
-                // permutation of one element one by one, and recursive call
+                //:COMMENT:permutation of one element one by one, and recursive call
                 for (int i = start; i <= end; i++) {
                     chosen.set(index, i);
                     CombinationRepetitionUtil(chosen, arr, index + 1,
@@ -70,7 +70,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
 
         }
     }
-    // Determine and add the Node that possess a candidat Link
+    //:COMMENT:Determine and add the Node that possess a candidat Link
     public   List<Node> NodeCandidates(Topology topology){
         List<Node> nodes = new ArrayList<>();
         for(Link l : topology.getLinks()){
@@ -88,13 +88,13 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
         return nodes;
     }
 
-    // calcul all the combination of the Arraylist int
+    //:COMMENT:calcul all the combination of the Arraylist int
    static void CombinationRepetition(ArrayList <Integer> list, int n, int r,Topology tp) {
         ArrayList<Integer> chosen = new ArrayList<>();
         for(int i=0;i<list.size();i++){
             chosen.add(0);
         }
-        // Call the recursive function
+        //:COMMENT:Call the recursive function
         CombinationRepetitionUtil(chosen, list, 0, r, 0, n - 1,tp);
     }
 
@@ -102,7 +102,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
 
     public int getNbConverterToplace(){ return converterToPlace; }
 
-    //Set the variable converter to false for all nodes
+    //:COMMENT:Set the variable converter to false for all nodes
     public static void reinitialiseConverter(List<Integer> candidatsNodes){
         for(int i=0;i<candidatsNodes.size();i++){
             for(Node n : getTopology().getNodes()){
@@ -114,7 +114,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
         }
     }
 
-    //Set a converter on each router of the list
+    //:COMMENT:Set a converter on each router of the list
     public static void setConverter(List<Integer> list, Topology tp){
         List <Integer> tmp=list;
         while(!tmp.isEmpty()){
@@ -130,7 +130,7 @@ public class ExactAlgorithm extends AlgorithmNonDistributed {
         }
     }
 
-    //COMMENT : Place a converter on the router r
+    //:COMMENT:COMMENT : Place a converter on the router r
     // if instanceof Glouton we do other treatment.
     public static void placeConverterOnRouterExact(Topology tp,Router r){
         r.addConverter();

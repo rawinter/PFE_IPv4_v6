@@ -82,7 +82,7 @@ public class Main implements SelectionListener, StartListener, CommandListener {
 
     @Override
     public void onCommand(String s) {
-//        This command is kept because the code need to be here
+        //:COMMENT:This command is kept because the code need to be here
         if(s.equals(COVERING_TREE)) {
             if (!colored) {
                 for (Link link : tp.getLinks()) {

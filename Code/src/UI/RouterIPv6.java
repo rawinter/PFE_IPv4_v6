@@ -126,7 +126,7 @@ public class RouterIPv6 extends Router {
                 this.placeConverter(content.getConverterRouter());
         }
         else if(result.equals(null)) {
-            //:COMMENT:Should not be here, only used to debug
+            //:COMMENT:Should not be here, only used to DEBUG if needed
         }
     }
 
