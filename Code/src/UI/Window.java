@@ -211,7 +211,11 @@ public class Window extends JViewer implements ActionListener, ItemListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if(actionEvent.getSource() == path){
-            pathing = true;
+            if(pathing){
+                pathing = false;
+            }else {
+                pathing = true;
+            }
         }
         if(actionEvent.getSource() == clear){
             tp.clear();
